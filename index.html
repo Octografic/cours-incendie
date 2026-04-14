@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sécurité incendie — Formation complète</title>
+<style>
+/* ================================================================
+   RESET & BASE
+================================================================ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;background:#f2f1ed;font-size:14px;line-height:1.7;display:flex;justify-content:center}
+
+/* ================================================================
+   PAGE WRAPPER — max 920px
+================================================================ */
+.page-wrapper{width:100%;max-width:920px;min-height:100vh;display:flex;flex-direction:column}
+
+/* ================================================================
+   LAYOUT GRID
+================================================================ */
+.app{display:grid;grid-template-columns:220px 1fr;min-height:600px;flex:1;transition:grid-template-columns .25s ease}
+.app.collapsed{grid-template-columns:42px 1fr}
+
+/* ================================================================
+   SIDEBAR
+================================================================ */
+.sidebar{background:#fff;border-right:1px solid #e0ddd5;display:flex;flex-direction:column;overflow:hidden;transition:width .25s}
+.sb-toggle{display:flex;align-items:center;justify-content:space-between;padding:.55rem .75rem .55rem 1rem;border-bottom:1px solid #e0ddd5;cursor:pointer;background:#f8f7f4;user-select:none;flex-shrink:0;min-height:38px}
+.sb-toggle:hover{background:#f0ede8}
+.sb-toggle-label{font-size:11px;font-weight:600;color:#5f5e5a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .2s}
+.sb-toggle-icon{font-size:13px;color:#888780;flex-shrink:0;transition:transform .25s}
+.app.collapsed .sb-toggle-icon{transform:rotate(180deg)}
+.app.collapsed .sb-toggle-label{opacity:0;width:0;padding:0}
+.sb-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.sb-head{padding:.6rem 1rem .55rem;border-bottom:1px solid #e0ddd5;transition:opacity .2s,height .25s;overflow:hidden}
+.app.collapsed .sb-head{opacity:0;height:0;padding:0;border:none}
+.sb-course{font-size:13px;font-weight:600;color:#1a1a1a}
+.sb-sub{font-size:11px;color:#888780;margin-top:2px}
+.sb-nav{flex:1;overflow-y:auto;padding-top:.25rem}
+.app.collapsed .sb-nav{overflow:hidden}
+.sb-section-label{font-size:10px;font-weight:600;color:#888780;text-transform:uppercase;letter-spacing:.07em;padding:.75rem 1rem .35rem;display:block;white-space:nowrap;transition:opacity .2s}
+.app.collapsed .sb-section-label{opacity:0;pointer-events:none}
+.sb-link{display:flex;align-items:center;gap:7px;padding:10px 1rem;font-size:12px;color:#5f5e5a;cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;white-space:nowrap;overflow:hidden}
+.sb-link:hover{background:#f5f4f0;color:#1a1a1a}
+.sb-link.active{background:#e6f1fb;color:#185fa5;font-weight:500}
+.sb-link-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:opacity .2s,width .25s}
+.app.collapsed .sb-link-text{opacity:0;width:0}
+.app.collapsed .sb-link{justify-content:center;padding:10px 0}
+.sb-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.done-dot{background:#639922}.cur-dot{background:#378add}.todo-dot{background:#d0cec6}
+.sb-link.quiz-locked{color:#aaa;cursor:not-allowed}
+.sb-link.quiz-locked:hover{background:none;color:#aaa}
+.sb-link.quiz-ready{color:#7c6fcd;font-weight:600}
+.sb-link.quiz-ready.active{background:#f0eeff;color:#534ab7}
+.sb-mini-prog{display:none;flex-direction:column;align-items:center;gap:3px;padding:.5rem 0}
+.app.collapsed .sb-mini-prog{display:flex}
+.app.collapsed .sb-nav .sb-link,.app.collapsed .sb-nav .sb-section-label{display:none}
+
+/* ================================================================
+   MAIN AREA
+================================================================ */
+.main{display:flex;flex-direction:column;min-height:600px}
+.topbar{background:#fff;border-bottom:1px solid #e0ddd5;padding:.6rem 1.25rem;display:flex;align-items:center;gap:6px;font-size:11px;color:#888780}
+.topbar .crumb-active{color:#1a1a1a;font-weight:500}
+.view{flex:1;padding:1.25rem;overflow:auto}
+
+/* ================================================================
+   HOME PAGE
+================================================================ */
+.home-title{font-size:18px;font-weight:600;margin-bottom:4px;color:#1a1a1a}
+.home-meta{font-size:12px;color:#5f5e5a;margin-bottom:1rem}
+.prog-label{font-size:11px;color:#888780;margin-bottom:4px}
+.prog-wrap{height:5px;background:#e0ddd5;border-radius:4px;margin-bottom:1.25rem}
+.prog-fill{height:100%;border-radius:4px;background:#639922;transition:width .4s}
+.part-sep{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#888780;padding:.75rem 0 .5rem;border-bottom:1px solid #e0ddd5;margin-bottom:.75rem}
+.mod-card{background:#fff;border:1px solid #e0ddd5;border-radius:8px;padding:.875rem 1rem;margin-bottom:.625rem;cursor:pointer;display:flex;align-items:center;gap:.875rem;transition:border-color .15s}
+.mod-card:hover{border-color:#b0ada5}
+.mod-icon{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ic-red{background:#fcebeb}.ic-orange{background:#faeeda}.ic-blue{background:#e6f1fb}
+.ic-green{background:#eaf3de}.ic-coral{background:#faece7}.ic-purple{background:#f0eeff}
+.ic-teal{background:#e0f4f4}.ic-yellow{background:#fffbe0}
+.mod-info{flex:1;min-width:0}
+.mod-num{font-size:10px;color:#888780;letter-spacing:.04em}
+.mod-name{font-size:13px;font-weight:500;line-height:1.3;color:#1a1a1a}
+.mod-desc-short{font-size:11px;color:#5f5e5a;margin-top:2px}
+.badge{padding:2px 8px;border-radius:40px;font-size:10px;font-weight:500;flex-shrink:0}
+.b-done{background:#eaf3de;color:#27500a}.b-todo{background:#f2f1ed;color:#888780}
+.arr{font-size:11px;color:#888780}
+.quiz-home-card{background:#f0eeff;border:1px solid #c8bef0;border-radius:8px;padding:1rem 1.25rem;margin-top:1.25rem;display:flex;align-items:center;gap:.875rem;cursor:pointer;transition:border-color .15s}
+.quiz-home-card:hover{border-color:#9c8de0}
+.quiz-home-card.locked{cursor:not-allowed;opacity:.7}
+.quiz-home-card.locked:hover{border-color:#c8bef0}
+.quiz-card-icon{width:40px;height:40px;border-radius:8px;background:#e8e0ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.quiz-card-title{font-size:14px;font-weight:600;color:#3c2a8a}
+.quiz-card-sub{font-size:11px;color:#7c6fcd;margin-top:2px}
+.quiz-lock-msg{font-size:11px;color:#e07800;margin-top:4px;font-weight:500}
+
+/* ================================================================
+   MODULE PAGE — sequential scrollable sections
+================================================================ */
+.mod-page{display:none;flex-direction:column;gap:0}
+.mod-page.visible{display:flex}
+.home-view.hidden{display:none}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#5f5e5a;cursor:pointer;padding:4px 0;border:none;background:none;margin-bottom:.75rem}
+.back-btn:hover{color:#1a1a1a}
+.mod-header-block{background:#fff;border:1px solid #e0ddd5;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem}
+.mod-header-block h1{font-size:17px;font-weight:600;margin-bottom:4px;color:#1a1a1a}
+.mod-header-block p{font-size:12px;color:#5f5e5a}
+
+/* Section block */
+.lesson-block{background:#fff;border:1px solid #e0ddd5;border-radius:8px;margin-bottom:1.25rem;overflow:hidden}
+.lesson-block-header{padding:.875rem 1.25rem;border-bottom:1px solid #e0ddd5;background:#f8f7f4}
+.lesson-block-title{font-size:14px;font-weight:700;color:#1a1a1a}
+.lesson-block-body{padding:1.25rem}
+
+/* ================================================================
+   CONTENT COMPONENTS — prose, boxes, grids, images
+================================================================ */
+
+/* --- Prose paragraphs --- */
+.prose p{font-size:13px;color:#3a3a37;margin-bottom:.75rem;line-height:1.7}
+.prose strong{color:#1a1a1a;font-weight:600}
+.prose em{color:#185fa5;font-style:normal;font-weight:500}
+.prose h4{font-size:13px;font-weight:700;color:#1a1a1a;margin:1rem 0 .4rem}
+.prose h5{font-size:12px;font-weight:600;color:#444;margin:.75rem 0 .3rem;text-transform:uppercase;letter-spacing:.04em}
+.prose ul,.prose ol{padding-left:1.25rem;margin-bottom:.75rem}
+.prose ul li,.prose ol li{font-size:13px;color:#3a3a37;margin-bottom:4px}
+
+/* --- Image placeholder (future images) --- */
+.img-placeholder{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;background:#f5f4f0;border:2px dashed #d0cec6;border-radius:8px;padding:1.5rem;margin:.75rem 0;color:#888780;font-size:12px;text-align:center;min-height:100px}
+.img-placeholder span{font-size:24px}
+.img-placeholder p{margin:0;font-size:11px;color:#aaa}
+
+/* --- Info/warn/tip/note boxes --- */
+.infobox{background:#e6f1fb;border-left:3px solid #378add;border-radius:0 6px 6px 0;padding:.75rem 1rem;margin:.75rem 0;font-size:12px;color:#0c447c}
+.infobox strong{color:#042c53}
+.warnbox{background:#fcebeb;border-left:3px solid #f09595;border-radius:0 6px 6px 0;padding:.75rem 1rem;margin:.75rem 0;font-size:12px;color:#791f1f}
+.warnbox strong{color:#4a0f0f}
+.tipbox{background:#eaf3de;border-left:3px solid #97c459;border-radius:0 6px 6px 0;padding:.75rem 1rem;margin:.75rem 0;font-size:12px;color:#27500a}
+.tipbox strong{color:#0f3300}
+.orangebox{background:#fff4e0;border-left:3px solid #ef9f27;border-radius:0 6px 6px 0;padding:.75rem 1rem;margin:.75rem 0;font-size:12px;color:#633806}
+.orangebox strong{color:#3d1f00}
+
+/* --- Card grids --- */
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0}
+.card-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin:.75rem 0}
+@media(max-width:600px){.card-grid,.card-grid-3{grid-template-columns:1fr}}
+.mini-card{border:1px solid #e0ddd5;border-radius:6px;padding:.75rem;background:#fafaf8}
+.mini-card-title{font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
+.mini-card p{font-size:12px;color:#3a3a37;margin:0;line-height:1.5}
+.mini-card ul{font-size:12px;color:#3a3a37;padding-left:1rem;margin:0}
+.mini-card ul li{margin-bottom:2px}
+.mini-card.red{border-color:#f09595;background:#fef8f8}.mini-card.red .mini-card-title{color:#a32d2d}
+.mini-card.orange{border-color:#ef9f27;background:#fdf8f0}.mini-card.orange .mini-card-title{color:#633806}
+.mini-card.blue{border-color:#85b7eb;background:#f4f8fd}.mini-card.blue .mini-card-title{color:#0c447c}
+.mini-card.green{border-color:#97c459;background:#f5fbf0}.mini-card.green .mini-card-title{color:#27500a}
+.mini-card.purple{border-color:#afa9ec;background:#f8f6ff}.mini-card.purple .mini-card-title{color:#3c2a8a}
+.mini-card.coral{border-color:#f0997b;background:#fdf4f0}.mini-card.coral .mini-card-title{color:#712b13}
+.mini-card.gray{border-color:#c8c7c2;background:#f5f4f0}.mini-card.gray .mini-card-title{color:#444}
+.mini-card.teal{border-color:#80c8c8;background:#f0fafa}.mini-card.teal .mini-card-title{color:#1a6666}
+
+/* --- Extinction method cards --- */
+.ext-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:.75rem 0}
+@media(max-width:580px){.ext-method-grid{grid-template-columns:1fr}}
+.ext-card{border-radius:8px;padding:.875rem;border:1px solid}
+.ext-card-icon{font-size:24px;margin-bottom:.4rem}
+.ext-card-title{font-size:12px;font-weight:700;margin-bottom:.4rem}
+.ext-card p{font-size:11px;line-height:1.5;margin:0}
+
+/* --- Propagation cards --- */
+.prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0}
+@media(max-width:580px){.prop-grid{grid-template-columns:1fr}}
+.prop-card{border-radius:8px;padding:.875rem;border:1px solid}
+.prop-card-head{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.prop-card-icon{font-size:20px}
+.prop-card-title{font-size:13px;font-weight:700}
+.prop-card p{font-size:12px;color:#3a3a37;margin-bottom:.35rem;line-height:1.5}
+.prop-card .exemple{font-size:11px;font-style:italic;color:#888780}
+
+/* --- Data tables --- */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;margin:.75rem 0}
+.data-table th{background:#f2f1ed;color:#1a1a1a;font-weight:600;padding:6px 10px;text-align:left;border:1px solid #e0ddd5}
+.data-table td{padding:5px 10px;border:1px solid #e0ddd5;color:#3a3a37;vertical-align:top}
+.data-table tr:nth-child(even) td{background:#fafaf8}
+.data-table .ok{color:#27500a;font-weight:600;text-align:center}
+.data-table .no{color:#a32d2d;font-weight:600;text-align:center}
+.data-table .warn{color:#854f0b;font-weight:500;text-align:center}
+
+/* --- SVG diagram wrapper --- */
+.diagram-wrap{margin:.75rem 0;background:#f5f4f0;border-radius:6px;padding:1rem;display:flex;justify-content:center;overflow-x:auto}
+
+/* --- Images --- */
+img.image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem auto;
+  cursor: zoom-in;
+  border-radius: 4px;
+  transition: opacity .15s;
+}
+img.image:hover { opacity: .85; }
+
+/* --- Lightbox --- */
+#lightbox{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.88);
+  align-items:center;justify-content:center;
+  cursor:zoom-out;
+}
+#lightbox.open{display:flex;}
+#lightbox img{
+  max-width:92vw;max-height:92vh;
+  border-radius:6px;box-shadow:0 8px 40px rgba(0,0,0,.6);
+  cursor:zoom-out;
+  animation:lb-in .18s ease;
+}
+@keyframes lb-in{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+
+/* ================================================================
+   CHECKLIST & MODULE VALIDATION
+================================================================ */
+.checklist-wrap{background:#f4fdf0;border:1px solid #b8dea0;border-radius:10px;padding:1.1rem 1.25rem}
+.checklist-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4a8a1f;margin-bottom:.8rem}
+.checklist-items{display:flex;flex-direction:column;gap:6px}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid #c8e8b0;background:#fff;cursor:pointer;font-size:12px;color:#3a3a37;transition:all .2s;user-select:none}
+.chk-item:hover{background:#eaf3de;border-color:#97c459}
+.chk-item.checked{background:#eaf3de;border-color:#639922;color:#27500a}
+.chk-item.checked .chk-box{background:#639922;border-color:#639922;color:#fff}
+.chk-box{width:18px;height:18px;border-radius:4px;border:2px solid #b8dea0;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;transition:all .2s;background:#fff}
+.chk-text{flex:1;line-height:1.5}
+.chk-progress{font-size:11px;color:#639922;margin-top:.6rem;font-weight:500}
+
+/* --- Module bottom nav --- */
+.mod-nav-bottom{display:flex;gap:.75rem;justify-content:flex-end;padding-top:.75rem;border-top:1px solid #e0ddd5;margin-top:.5rem;margin-bottom:1rem}
+.nav-btn{padding:7px 18px;border-radius:40px;font-size:12px;border:1px solid #e0ddd5;background:#fff;cursor:pointer;color:#1a1a1a;transition:background .15s}
+.nav-btn:hover{background:#f5f4f0}
+.nav-btn.primary{background:#185fa5;color:#fff;border-color:#185fa5}
+.nav-btn.primary:hover{background:#0c447c}
+
+/* ================================================================
+   QUIZ PAGE
+================================================================ */
+.quiz-page{display:none;flex-direction:column;gap:0}
+.quiz-page.visible{display:flex}
+.gquiz-wrap{background:#fff;border:1px solid #e0ddd5;border-radius:10px;padding:1.5rem;margin-bottom:1.25rem}
+.gquiz-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+.gquiz-title{font-size:16px;font-weight:700;color:#3c2a8a}
+.gquiz-subtitle{font-size:12px;color:#7c6fcd;margin-bottom:1.5rem}
+
+/* Question block */
+.gquiz-question{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #e8e0ff}
+.gquiz-question:last-of-type{border-bottom:none;margin-bottom:.5rem}
+.gquiz-q-num{font-size:11px;color:#9c8de0;font-weight:700;margin-bottom:.35rem}
+.gquiz-q{font-size:13px;font-weight:600;color:#2c2060;margin-bottom:.6rem}
+
+/* Answer options with letter labels */
+.gquiz-opts{display:flex;flex-direction:column;gap:6px}
+.gqopt{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;border:1px solid #d0cbe8;cursor:pointer;font-size:12px;transition:all .15s;background:#fff;color:#3a3a37}
+.gqopt:hover{border-color:#9c8de0;background:#f0eeff}
+.gqopt.gq-correct{background:#eaf3de;border-color:#97c459;color:#27500a;pointer-events:none}
+.gqopt.gq-wrong{background:#fcebeb;border-color:#f09595;color:#791f1f;pointer-events:none}
+.gqopt.gq-disabled{pointer-events:none;opacity:.55}
+.gqopt-letter{width:20px;height:20px;border-radius:4px;background:#e8e0ff;color:#534ab7;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gqopt.gq-correct .gqopt-letter{background:#97c459;color:#fff}
+.gqopt.gq-wrong .gqopt-letter{background:#f09595;color:#fff}
+.gqopt.gq-disabled .gqopt-letter{background:#ddd;color:#888}
+
+/* Explanation */
+.gquiz-expl{font-size:11px;margin-top:8px;padding:7px 12px;border-radius:5px;display:none}
+.gquiz-expl.show{display:block}
+.gquiz-expl-ok{background:#eaf3de;color:#27500a}
+.gquiz-expl-ko{background:#fcebeb;color:#791f1f}
+
+/* Progress bar */
+.gquiz-progress-bar-wrap{height:4px;background:#e8e0ff;border-radius:4px;margin-bottom:1.5rem}
+.gquiz-progress-bar{height:100%;border-radius:4px;background:#7c6fcd;transition:width .3s}
+
+/* Score block */
+.gquiz-score-wrap{display:none;background:#f8f6ff;border:1px solid #d0cbe8;border-radius:10px;padding:1.5rem;text-align:center;margin-top:1rem}
+.gquiz-score-wrap.show{display:block}
+.gquiz-score-num{font-size:36px;font-weight:700;color:#3c2a8a}
+.gquiz-score-label{font-size:14px;color:#7c6fcd;margin-top:4px;margin-bottom:.75rem}
+.gquiz-score-bar-wrap{height:10px;background:#e8d070;border-radius:4px;margin:.75rem auto;max-width:300px}
+.gquiz-score-bar{height:100%;border-radius:4px;background:#639922;transition:width .8s ease}
+.gquiz-score-bar.fail{background:#e24b4a}
+.gquiz-retry-btn{padding:8px 22px;border-radius:40px;font-size:12px;border:1px solid #c4aef0;background:#f0eeff;cursor:pointer;color:#3c2a8a;margin:.5rem .25rem 0}
+.gquiz-retry-btn:hover{background:#e8e0ff}
+.gquiz-pass-msg{background:#eaf3de;border:1px solid #97c459;border-radius:8px;padding:1rem;margin-top:1rem;color:#27500a;font-size:13px;font-weight:600;display:none}
+.gquiz-pass-msg.show{display:block}
+.gquiz-fail-msg{background:#fcebeb;border:1px solid #f09595;border-radius:8px;padding:1rem;margin-top:1rem;color:#791f1f;font-size:13px;display:none}
+.gquiz-fail-msg.show{display:block}
+
+/* Send result form */
+.send-form-wrap{background:#f8f6ff;border:1px solid #d0cbe8;border-radius:10px;padding:1.5rem;margin-top:1.25rem;display:none}
+.send-form-wrap.show{display:block}
+.send-form-title{font-size:13px;font-weight:700;color:#3c2a8a;margin-bottom:1rem}
+.form-group{margin-bottom:.875rem}
+.form-label{font-size:11px;font-weight:600;color:#5f5e5a;display:block;margin-bottom:4px}
+.form-input{width:100%;padding:7px 10px;border:1px solid #d0cbe8;border-radius:6px;font-size:12px;color:#1a1a1a;background:#fff;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:#9c8de0}
+.form-input[readonly]{background:#f5f4f0;color:#5f5e5a;cursor:not-allowed}
+.form-textarea{resize:none;font-family:monospace;font-size:11px;min-height:120px}
+.send-btn{padding:8px 24px;border-radius:40px;font-size:12px;border:none;background:#534ab7;color:#fff;cursor:pointer;font-weight:600;transition:background .15s}
+.send-btn:hover{background:#3c2a8a}
+.send-success{background:#eaf3de;border:1px solid #97c459;border-radius:6px;padding:.75rem 1rem;font-size:12px;color:#27500a;margin-top:.75rem;display:none}
+.send-success.show{display:block}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+<div class="app" id="app">
+
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
+<div class="sidebar">
+  <div class="sb-toggle" onclick="toggleSidebar()" title="Replier/déplier">
+    <span class="sb-toggle-label">📋 Navigation</span>
+    <span class="sb-toggle-icon">◀</span>
+  </div>
+  <div class="sb-body">
+    <div class="sb-head">
+      <div class="sb-course">Sécurité incendie</div>
+      <div class="sb-sub">13 modules · Formation complète</div>
+    </div>
+    <div class="sb-nav" id="sb-nav">
+      <button class="sb-link" onclick="showHome()" id="sblink-home" style="font-weight:600;color:#1a1a1a">
+        <span style="font-size:14px;flex-shrink:0">🏠</span>
+        <span class="sb-link-text">Accueil</span>
+      </button>
+      <span class="sb-section-label">Partie 1 — Comprendre le feu</span>
+      <button class="sb-link" onclick="goMod(0)" id="sblink-0"><span class="sb-status todo-dot" id="sbdot-0"></span><span class="sb-link-text">1. Le feu & le triangle</span></button>
+      <button class="sb-link" onclick="goMod(1)" id="sblink-1"><span class="sb-status todo-dot" id="sbdot-1"></span><span class="sb-link-text">2. Combustibles & gaz</span></button>
+      <button class="sb-link" onclick="goMod(2)" id="sblink-2"><span class="sb-status todo-dot" id="sbdot-2"></span><span class="sb-link-text">3. Causes de départ</span></button>
+      <button class="sb-link" onclick="goMod(3)" id="sblink-3"><span class="sb-status todo-dot" id="sbdot-3"></span><span class="sb-link-text">4. Propagation</span></button>
+      <button class="sb-link" onclick="goMod(4)" id="sblink-4"><span class="sb-status todo-dot" id="sbdot-4"></span><span class="sb-link-text">5. Cinétique & flash-over</span></button>
+      <button class="sb-link" onclick="goMod(5)" id="sblink-5"><span class="sb-status todo-dot" id="sbdot-5"></span><span class="sb-link-text">6. Conséquences humaines</span></button>
+      <button class="sb-link" onclick="goMod(6)" id="sblink-6"><span class="sb-status todo-dot" id="sbdot-6"></span><span class="sb-link-text">7. Classes de feux</span></button>
+      <span class="sb-section-label">Partie 2 — Agir & prévenir</span>
+      <button class="sb-link" onclick="goMod(7)" id="sblink-7"><span class="sb-status todo-dot" id="sbdot-7"></span><span class="sb-link-text">8. Alerter</span></button>
+      <button class="sb-link" onclick="goMod(8)" id="sblink-8"><span class="sb-status todo-dot" id="sbdot-8"></span><span class="sb-link-text">9. Évacuer</span></button>
+      <button class="sb-link" onclick="goMod(9)" id="sblink-9"><span class="sb-status todo-dot" id="sbdot-9"></span><span class="sb-link-text">10. Extincteurs</span></button>
+      <button class="sb-link" onclick="goMod(10)" id="sblink-10"><span class="sb-status todo-dot" id="sbdot-10"></span><span class="sb-link-text">11. Autres moyens d’extinction</span></button>
+      <button class="sb-link" onclick="goMod(11)" id="sblink-11"><span class="sb-status todo-dot" id="sbdot-11"></span><span class="sb-link-text">12. Prévention & bâtiment</span></button>
+      <button class="sb-link" onclick="goMod(12)" id="sblink-12"><span class="sb-status todo-dot" id="sbdot-12"></span><span class="sb-link-text">13. Pour aller plus loin</span></button>
+      <span class="sb-section-label">Évaluation</span>
+      <button class="sb-link quiz-locked" onclick="tryOpenQuiz()" id="sblink-quiz">
+        <span style="font-size:14px;flex-shrink:0">🏆</span>
+        <span class="sb-link-text" id="sblink-quiz-text">Quiz final 🔒</span>
+      </button>
+      <div class="sb-mini-prog" id="sb-mini-prog"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+<div class="main">
+  <div class="topbar">
+    <span onclick="showHome()" style="cursor:pointer">Accueil</span>
+    <span>›</span>
+    <span class="crumb-active" id="crumb">Sécurité incendie</span>
+  </div>
+  <div class="view">
+
+    <!-- HOME VIEW -->
+    <div class="home-view" id="home-view">
+      <div class="home-title">Formation — Prévention & sécurité incendie</div>
+      <div class="home-meta">Lisez chaque module et cochez tous les points clés pour valider votre progression.</div>
+      <div class="prog-label" id="prog-label">Progression — 0 module sur 13 validé</div>
+      <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="part-sep">Partie 1 — Comprendre le feu</div>
+      <div class="mod-card" onclick="goMod(0)"><div class="mod-icon ic-orange">🔺</div><div class="mod-info"><div class="mod-num">Module 1</div><div class="mod-name">Le feu & le triangle</div><div class="mod-desc-short">Triangle du feu, 3 éléments, comment éteindre</div></div><span class="badge b-todo" id="homebadge-0">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(1)"><div class="mod-icon ic-orange">⚗️</div><div class="mod-info"><div class="mod-num">Module 2</div><div class="mod-name">Combustibles & gaz</div><div class="mod-desc-short">Solides, liquides, gaz — LIE, LSE, auto-inflammation</div></div><span class="badge b-todo" id="homebadge-1">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(2)"><div class="mod-icon ic-coral">🔍</div><div class="mod-info"><div class="mod-num">Module 3</div><div class="mod-name">Causes de départ de feu</div><div class="mod-desc-short">Causes humaines, naturelles, techniques</div></div><span class="badge b-todo" id="homebadge-2">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(3)"><div class="mod-icon ic-red">🌊</div><div class="mod-info"><div class="mod-num">Module 4</div><div class="mod-name">Modes de propagation</div><div class="mod-desc-short">Rayonnement, conduction, convection, projection</div></div><span class="badge b-todo" id="homebadge-3">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(4)"><div class="mod-icon ic-red">📈</div><div class="mod-info"><div class="mod-num">Module 5</div><div class="mod-name">Cinétique & flash-over</div><div class="mod-desc-short">4 phases, points d'inflammation, flash-over</div></div><span class="badge b-todo" id="homebadge-4">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(5)"><div class="mod-icon ic-red">🚑</div><div class="mod-info"><div class="mod-num">Module 6</div><div class="mod-name">Conséquences sur l'être humain</div><div class="mod-desc-short">Brûlures, inhalation, anoxie, CO</div></div><span class="badge b-todo" id="homebadge-5">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(6)"><div class="mod-icon ic-purple">🏷️</div><div class="mod-info"><div class="mod-num">Module 7</div><div class="mod-name">Classes de feux</div><div class="mod-desc-short">Classes A, B, C, D, F — risque électrique</div></div><span class="badge b-todo" id="homebadge-6">À faire</span><span class="arr">›</span></div>
+      <div class="part-sep">Partie 2 — Agir & prévenir</div>
+      <div class="mod-card" onclick="goMod(7)"><div class="mod-icon ic-blue">🔔</div><div class="mod-info"><div class="mod-num">Module 8</div><div class="mod-name">Alerter</div><div class="mod-desc-short">Alarme vs alerte, séquence optimale, numéros secours</div></div><span class="badge b-todo" id="homebadge-7">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(8)"><div class="mod-icon ic-blue">🚪</div><div class="mod-info"><div class="mod-num">Module 9</div><div class="mod-name">Évacuer</div><div class="mod-desc-short">Guide-file, serre-file, PMR, point de rassemblement</div></div><span class="badge b-todo" id="homebadge-8">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(9)"><div class="mod-icon ic-orange">🧯</div><div class="mod-info"><div class="mod-num">Module 10</div><div class="mod-name">Extincteurs</div><div class="mod-desc-short">Types, agents, PASS, implantation, vérification</div></div><span class="badge b-todo" id="homebadge-9">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(10)"><div class="mod-icon ic-teal">🪣</div><div class="mod-info"><div class="mod-num">Module 11</div><div class="mod-name">Autres moyens d’extinction</div><div class="mod-desc-short">Couverture anti-feu, RIA, seau de sable</div></div><span class="badge b-todo" id="homebadge-10">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(11)"><div class="mod-icon ic-green">🛡️</div><div class="mod-info"><div class="mod-num">Module 12</div><div class="mod-name">Prévention & bâtiment</div><div class="mod-desc-short">Organisation, REI, compartimentage, registre</div></div><span class="badge b-todo" id="homebadge-11">À faire</span><span class="arr">›</span></div>
+      <div class="mod-card" onclick="goMod(12)"><div class="mod-icon ic-yellow">📚</div><div class="mod-info"><div class="mod-num">Module 13</div><div class="mod-name">Pour aller plus loin</div><div class="mod-desc-short">Textes réglementaires, formations, ressources</div></div><span class="badge b-todo" id="homebadge-12">À faire</span><span class="arr">›</span></div>
+      <div class="quiz-home-card locked" id="quiz-home-card" onclick="tryOpenQuiz()">
+        <div class="quiz-card-icon">🏆</div>
+        <div>
+          <div class="quiz-card-title">Quiz de certification</div>
+          <div class="quiz-card-sub">10 questions · Score minimum : 7/10 · 48 questions dans la banque</div>
+          <div class="quiz-lock-msg" id="quiz-home-lock-msg">🔒 Validez tous les modules pour débloquer</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE VIEW -->
+    <div id="mod-view" class="mod-page"></div>
+
+    <!-- QUIZ VIEW -->
+    <div id="quiz-view" class="quiz-page"></div>
+
+  </div><!-- end .view -->
+</div><!-- end .main -->
+
+</div><!-- end .app -->
+</div><!-- end .page-wrapper -->
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+// ================================================================
+// CONFIGURATION — modifier ici l'adresse du destinataire
+// ================================================================
+const CONFIG = {
+  DESTINATAIRE_EMAIL: "responsable@votreentreprise.fr",  // ← Modifier ici
+  DESTINATAIRE_LABEL: "Responsable formation"
+};
+
+// ================================================================
+// MODULES — contenu pédagogique
+// Chaque module = { num, icon, icClass, title, sections[], checklist[] }
+// sections[] = [{ title, content }]  — contenu HTML affiché en séquence
+// checklist[] = ["point clé 1", ...]  — cocher tout pour valider
+// img-placeholder : <div class="img-placeholder"><span>🖼️</span><p>Légende ici</p></div>
+// ================================================================
+const MODULES = [
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 1 — Le feu & le triangle                            ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 1, icon: "🔺", icClass: "ic-orange",
+  title: "Le feu & le triangle du feu",
+  sections: [
+
+    // ── Section 1.1 ─────────────────────────────────────────────
+    {
+      title: "Qu'est-ce que le feu ?",
+      content: `
+        <div class="prose">
+          <p>
+            Le feu est une <strong>réaction chimique d'oxydation exothermique</strong> : une matière
+            combustible réagit avec l'oxygène et libère de l'énergie sous forme de chaleur,
+            lumière, fumée et gaz.
+          </p>
+          <p>
+            Contrairement à ce que l'on perçoit, la flamme n'est pas une chose solide :
+            c'est la zone où les vapeurs du combustible brûlent au contact du comburant.
+            C'est pourquoi un solide (bois, plastique) ne brûle pas directement :
+            il se <strong>pyrolyse</strong> d'abord (se décompose sous la chaleur en libérant des gaz),
+            et ce sont ces gaz qui s'enflamment.
+          </p>
+        </div>
+
+        <img class="image"  src="./img/pyrolyse.png"alt="schéma de la pyrolyse du bois" />
+
+        <div class="infobox">
+          <strong>Réaction de combustion simplifiée :</strong><br>
+          Combustible + Oxygène → CO₂ + H₂O + chaleur + lumière<br>
+          (combustion complète — la combustion incomplète produit du CO toxique)
+        </div>
+      `
+    },
+
+    // ── Section 1.2 ─────────────────────────────────────────────
+    {
+      title: "Le triangle du feu — 3 éléments indispensables",
+      content: `
+        <div class="prose">
+          <p>
+            Un feu ne peut ni s'allumer ni se maintenir si l'un des trois éléments
+            ci-dessous est absent. C'est le <strong>principe du triangle du feu</strong>,
+            fondement de toute stratégie d'extinction.
+          </p>
+        </div>
+
+        <img class="image"  src="./img/triangle-du-feu.png"alt="schéma du triangle du feu" />
+
+        <div class="card-grid-3">
+          <div class="mini-card red">
+            <div class="mini-card-title">🪵 Combustible</div>
+            <p>Toute matière susceptible de brûler : bois, papier, tissu, carburant, gaz, métal...</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">💨 Comburant</div>
+            <p>Agent oxydant — l'oxygène de l'air (21 %). La combustion est possible dès 15-16 % d'O₂.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">⚡ Énergie</div>
+            <p>Source d'activation : flamme, étincelle, surface chaude, friction, réaction chimique...</p>
+          </div>
+        </div>
+      `
+    },
+
+    // ── Section 1.3 ─────────────────────────────────────────────
+    {
+      title: "Éteindre un feu — agir sur le triangle",
+      content: `
+        <div class="prose">
+          <p>
+            Supprimer <strong>l'un quelconque des trois éléments</strong> du triangle suffit
+            à éteindre ou à prévenir un feu. Chaque agent extincteur exploite un ou
+            plusieurs de ces mécanismes.
+          </p>
+        </div>
+
+        <div class="ext-method-grid">
+          <div class="ext-card" style="background:#e8f3fb;border-color:#85b7eb">
+            <div class="ext-card-icon">💧</div>
+            <div class="ext-card-title" style="color:#0c447c">Refroidissement<br><small style="font-weight:400;font-size:10px">→ supprimer l'énergie</small></div>
+            <p style="color:#185fa5;font-size:11px">
+              Abaisser la température en dessous du point d'inflammation.
+              L'eau est l'agent le plus efficace (chaleur latente d'évaporation : 2 260 kJ/kg).
+              <br><em>Agents : eau, eau pulvérisée, eau + additif.</em>
+            </p>
+          </div>
+          <div class="ext-card" style="background:#f0eeff;border-color:#afa9ec">
+            <div class="ext-card-icon">🫧</div>
+            <div class="ext-card-title" style="color:#3c2a8a">Étouffement<br><small style="font-weight:400;font-size:10px">→ supprimer le comburant</small></div>
+            <p style="color:#534ab7;font-size:11px">
+              Isoler le foyer de l'oxygène ambiant en formant un écran ou en diluant l'O₂.
+              La combustion s'arrête sous 13-14 % d'O₂.
+              <br><em>Agents : CO₂, mousse, couverture anti-feu, sable, poudre.</em>
+            </p>
+          </div>
+          <div class="ext-card" style="background:#fff4e0;border-color:#ef9f27">
+            <div class="ext-card-icon">🧪</div>
+            <div class="ext-card-title" style="color:#633806">Inhibition chimique<br><small style="font-weight:400;font-size:10px">→ briser la chaîne</small></div>
+            <p style="color:#854f0b;font-size:11px">
+              Interrompre la réaction en chaîne de combustion en injectant des radicaux libres
+              qui cassent les réactions chimiques entretenant le feu.
+              <br><em>Agents : poudre ABC, poudre BC.</em>
+            </p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <h4>4ᵉ méthode : supprimer le combustible lui-même</h4>
+          <p>
+            Fermer une vanne de gaz, éloigner des matières combustibles d'un foyer,
+            créer un coupe-feu en forêt. C'est la <strong>seule méthode valable pour les feux de gaz</strong> :
+            on ne tente jamais d'éteindre la flamme sans avoir d'abord coupé l'alimentation.
+          </p>
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Règle absolue — feux de gaz :</strong> Ne jamais éteindre une flamme de gaz
+          (propane, butane, méthane...) sans avoir préalablement coupé l'alimentation.
+          Sans coupure, le gaz continue à fuir et peut former une poche explosive qui
+          s'enflamme au moindre point chaud ou étincelle.
+        </div>
+
+        <img class="image"  src="./img/agents-extincteurs.png"alt=" tableau récapitulatif des agents extincteurs et leurs mécanismes" />
+      `
+    }
+  ],
+
+  checklist: [
+    "Le feu est une réaction d'oxydation exothermique : combustible + O₂ → chaleur + gaz.",
+    "Triangle du feu : COMBUSTIBLE + COMBURANT + ÉNERGIE — supprimer 1 des 3 éteint le feu.",
+    "La pyrolyse : les solides se décomposent en gaz avant de brûler.",
+    "Refroidissement = agir sur l'énergie (eau) ; Étouffement = agir sur l'O₂ (CO₂, mousse).",
+    "Inhibition chimique = briser la réaction en chaîne (poudre ABC).",
+    "Feux de gaz : couper l'alimentation AVANT toute extinction — jamais éteindre sans couper."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 2 — Combustibles & gaz                              ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 2, icon: "⚗️", icClass: "ic-orange",
+  title: "Combustibles & gaz inflammables",
+  sections: [
+
+    // ── Section 2.1 ─────────────────────────────────────────────
+    {
+      title: "Les combustibles solides et liquides",
+      content: `
+        <div class="prose">
+          <h4>Solides</h4>
+          <p>
+            Bois, papier, carton, textiles, caoutchouc, certains plastiques...
+            Ils se dégradent thermiquement (pyrolyse) avant de brûler via leurs vapeurs.
+            Plus un solide est divisé (copeaux, poudre), plus il est inflammable :
+            la surface de contact avec l'oxygène est plus grande.
+          </p>
+          <h4>Liquides — point d'éclair</h4>
+          <p>
+            Un liquide inflammable ne brûle pas directement : ce sont ses <strong>vapeurs</strong>
+            qui s'enflamment au-dessus de sa surface. Le <strong>point d'éclair</strong> est la
+            température minimale à laquelle le liquide émet assez de vapeurs pour s'enflammer
+            brièvement au contact d'une flamme. En dessous du point d'éclair, pas de combustion possible.
+          </p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>Produit</th><th>Point d'éclair</th><th>Point d'auto-inflam.</th><th>Classe</th><th>Risque à T° ambiante</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Essence</td><td>≈ −40 °C</td><td>≈ 280 °C</td><td>B</td><td>Extrême — toujours dangereux</td></tr>
+            <tr><td>Acétone</td><td>≈ −18 °C</td><td>≈ 465 °C</td><td>B</td><td>Très élevé</td></tr>
+            <tr><td>Alcool éthylique (95°)</td><td>≈ 13 °C</td><td>≈ 365 °C</td><td>B</td><td>Élevé</td></tr>
+            <tr><td>Gazole</td><td>≈ 55 °C</td><td>≈ 250 °C</td><td>B</td><td>Faible à froid</td></tr>
+            <tr><td>Huile de friture</td><td>≈ 300 °C</td><td>≈ 360 °C</td><td>F</td><td>Auto-inflammation possible si surchauffée</td></tr>
+          </tbody>
+        </table>
+
+        <div class="infobox">
+          <strong>Réglementation stockage :</strong> Les liquides avec un point d'éclair inférieur
+          à 60 °C sont classés inflammables — stockage obligatoire en armoires agréées,
+          quantités limitées, ventilation forcée, éloignement des sources d'ignition.
+        </div>
+
+        <img class="image"  src="./img/points-eclair.png"alt="tableau récapitulatif des points eclairs" />
+      `
+    },
+
+    // ── Section 2.2 ─────────────────────────────────────────────
+    {
+      title: "Les gaz combustibles — LIE, LSE, auto-inflammation",
+      content: `
+        <div class="prose">
+          <p>
+            Les gaz combustibles ne sont dangereux que dans une plage de concentration précise
+            dans l'air, le <strong>domaine d'explosivité</strong>, délimité par deux seuils :
+          </p>
+          <ul>
+            <li>
+              <strong>LIE — Limite Inférieure d'Explosivité</strong> : en dessous, le mélange
+              est trop pauvre en gaz — pas d'inflammation possible.
+            </li>
+            <li>
+              <strong>LSE — Limite Supérieure d'Explosivité</strong> : au-dessus, le mélange
+              est trop riche (manque d'air) — pas de propagation de flamme,
+              mais le gaz reste dangereux si dilué.
+            </li>
+          </ul>
+		  
+			<img class="image"  src="./img/lie-lse.png"alt="Schema explicatid des LIE/LSE" />
+			
+          <p>
+            <strong>Entre LIE et LSE</strong>, le mélange est explosif :
+            une simple étincelle, même très faible (interrupteur électrique, sonnerie),
+            peut déclencher une déflagration ou une détonation.
+          </p>
+		
+			<img class="image"  src="./img/plages-explosivite.png"alt="Schema des plages d'explosivité" />
+			
+          <p>
+            Le <strong>point d'auto-inflammation (PAI)</strong> est la température à laquelle
+            un gaz s'enflamme spontanément, sans source d'ignition externe.
+          </p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>Gaz</th><th>LIE (%vol)</th><th>LSE (%vol)</th><th>PAI</th><th>Densité / air</th><th>Comportement fuite</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Méthane (gaz naturel)</td><td>5 %</td><td>15 %</td><td>≈ 600 °C</td><td>0,55</td><td>Monte — plafonds, combles</td></tr>
+            <tr><td>Propane</td><td>2,1 %</td><td>9,5 %</td><td>≈ 470 °C</td><td>1,56</td><td>Descend — sol, caves, puisards</td></tr>
+            <tr><td>Butane</td><td>1,8 %</td><td>8,5 %</td><td>≈ 370 °C</td><td>2,07</td><td>Descend — idem propane</td></tr>
+            <tr><td>Hydrogène</td><td>4 %</td><td>75 %</td><td>≈ 500 °C</td><td>0,07</td><td>Monte très vite</td></tr>
+            <tr><td>Acétylène</td><td>2,5 %</td><td>80 %</td><td>≈ 300 °C</td><td>0,9</td><td>Neutre — se diffuse partout</td></tr>
+          </tbody>
+        </table>
+
+        <div class="orangebox">
+          <strong>⚠ Propane & butane :</strong> Plus lourds que l'air, ils s'accumulent
+          <em>au niveau du sol</em>, dans les caves, vides sanitaires, puisards.
+          Une fuite invisible dans un sous-sol peut créer une poche explosive.
+          Ventiler en bas (ouvrir des ouvertures basses) et ne pas créer d'étincelle.
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ En cas de fuite de gaz :</strong>
+          Ne pas allumer la lumière ni actionner d'interrupteur · Ne pas téléphoner à l'intérieur ·
+          Ouvrir portes et fenêtres · Couper l'alimentation en gaz · Évacuer ·
+          Appeler les secours depuis l'extérieur.
+        </div>
+
+      `
+    }
+  ],
+
+  checklist: [
+    "Point d'éclair : T° minimale d'émission de vapeurs — en dessous, pas de combustion.",
+    "LIE / LSE : entre ces deux limites, le mélange gaz/air est EXPLOSIF.",
+    "Propane / butane plus lourds que l'air → s'accumulent au sol et en cave.",
+    "Méthane plus léger que l'air → monte vers les plafonds et les combles.",
+    "Fuite de gaz : aucune étincelle, ventiler, couper l'alimentation, évacuer."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 3 — Causes de départ de feu                         ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 3, icon: "🔍", icClass: "ic-coral",
+  title: "Causes de départ de feu",
+  sections: [
+
+    // ── Section 3.1 ─────────────────────────────────────────────
+    {
+      title: "Causes humaines — imprudences et négligences",
+      content: `
+        <div class="prose">
+          <p>
+            Les causes humaines sont les <strong>plus fréquentes</strong> : elles regroupent
+            les négligences involontaires et les actes malveillants.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card red">
+            <div class="mini-card-title">🍳 Cuisine (1ʳᵉ cause en habitation)</div>
+            <p>Friture laissée sans surveillance, huile surchauffée (auto-inflammation à ~360 °C),
+            torchon ou essuie-tout trop proche d'une flamme ou d'un brûleur chaud.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">🚬 Tabac</div>
+            <p>Mégot mal éteint, cigarette jetée depuis une fenêtre ou sur un balcon.
+            Un mégot peut couver plusieurs heures avant de provoquer un incendie.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">🔌 Électricité domestique</div>
+            <p>Multiprises en cascade, surcharge de circuit, câbles abîmés,
+            appareils laissés en charge sur des surfaces textiles (risque de surchauffe).</p>
+          </div>
+          <div class="mini-card green">
+            <div class="mini-card-title">🕯️ Flammes nues</div>
+            <p>Bougies laissées sans surveillance, barbecue mal contrôlé,
+            brûlage de végétaux par vent, bricolage au chalumeau sans précautions.</p>
+          </div>
+          <div class="mini-card coral">
+            <div class="mini-card-title">🛠️ Travaux par point chaud</div>
+            <p>Soudure, meulage, découpe thermique sans permis de feu,
+            projections d'étincelles sur matériaux isolants ou textiles.</p>
+          </div>
+          <div class="mini-card purple">
+            <div class="mini-card-title">🗑️ Stockage inadapté</div>
+            <p>Produits inflammables mal rangés, chiffons imbibés d'huile entassés
+            (combustion spontanée par oxydation — danger invisible).</p>
+          </div>
+        </div>
+
+        <div class="orangebox">
+          <strong>Combustion spontanée :</strong> Des chiffons imprégnés d'huile de lin,
+          de peinture à l'huile ou de certains solvants peuvent s'enflammer seuls
+          par oxydation lente et accumulation de chaleur. Toujours les immerger dans
+          un seau d'eau ou les placer dans un contenant métallique fermé hermétiquement.
+        </div>
+
+        <div class="prose">
+          <h4>Actes malveillants</h4>
+          <p>
+            L'incendie criminel représente une part significative des sinistres industriels
+            et de la grande distribution. Les systèmes de détection précoce, la vidéosurveillance
+            et la clôture des sites réduisent ce risque.
+          </p>
+        </div>
+		
+		<img class="image"  src="./img/causes-hum.png"alt="les causes d'origine humaine" />
+      `
+    },
+
+    // ── Section 3.2 ─────────────────────────────────────────────
+    {
+      title: "Causes naturelles",
+      content: `
+        <div class="prose">
+          <p>
+            Indépendantes de toute action humaine, elles sont moins fréquentes en milieu bâti
+            mais peuvent déclencher des sinistres catastrophiques, notamment en milieu naturel.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card orange">
+            <div class="mini-card-title">⚡ Foudre</div>
+            <p>Un éclair concentre jusqu'à 1 milliard de volts.
+            Principale cause naturelle d'incendie de forêt.
+            Les paratonnerres canalisent l'énergie vers la terre de façon sécurisée.</p>
+          </div>
+          <div class="mini-card red">
+            <div class="mini-card-title">☀️ Concentration solaire</div>
+            <p>Un rayon concentré par une loupe, une bouteille remplie d'eau,
+            un miroir ou une vitre peut atteindre des T° suffisantes pour enflammer
+            des matières sèches (herbe, feuilles, bois sec).</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">🌡️ Auto-inflammation naturelle</div>
+            <p>Le foin récolté trop humide, le compost ou le charbon en vrac
+            peuvent s'échauffer par réactions biologiques internes (fermentation, oxydation)
+            jusqu'à atteindre leur PAI.</p>
+          </div>
+          <div class="mini-card green">
+            <div class="mini-card-title">🌬️ Conditions météo</div>
+            <p>Sécheresse, vents forts, températures élevées : ces conditions n'allument
+            pas directement un feu mais créent un terrain ultra-favorable.
+            Un brandon transporté par le vent peut allumer un foyer à plusieurs kilomètres.</p>
+          </div>
+        </div>
+
+		<img class="image"  src="./img/causes-nat.png"alt="les causes d'origine naturelle" />
+      `
+    },
+
+    // ── Section 3.3 ─────────────────────────────────────────────
+    {
+      title: "Causes techniques",
+      content: `
+        <div class="prose">
+          <p>
+            Les causes techniques résultent de <strong>défaillances d'installations ou d'équipements</strong>.
+            Elles sont souvent liées à un manque d'entretien, à un vieillissement
+            des équipements ou à une conception inadaptée.
+          </p>
+          <h4>Installations électriques — 1ʳᵉ cause en milieu professionnel (~30 %)</h4>
+          <ul>
+            <li><strong>Surcharge de circuit</strong> : un câble dimensionné pour 10 A alimentant 16 A
+            en continu — l'isolant s'échauffe progressivement jusqu'à la carbonisation.</li>
+            <li><strong>Court-circuit</strong> : contact entre deux conducteurs de potentiels différents.
+            Énergie libérée très importante en un instant.</li>
+            <li><strong>Arc électrique</strong> : décharge à travers un infime espace — température > 3 000 °C,
+            capable d'enflammer presque tout matériau à proximité.</li>
+            <li><strong>Vieillissement des isolants</strong> : gaine plastique craquée, connexion oxydée
+            générant une résistance de contact élevée et de la chaleur.</li>
+          </ul>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card orange">
+            <div class="mini-card-title">⚙️ Friction mécanique</div>
+            <p>Roulements défaillants, pièces mal lubrifiées, courroies qui patinent :
+            la friction génère de la chaleur pouvant enflammer les poussières ou vapeurs environnantes.</p>
+          </div>
+          <div class="mini-card red">
+            <div class="mini-card-title">🌡️ Surchauffe d'équipements</div>
+            <p>Moteurs, transformateurs, résistances mal ventilés. Un moteur en surcharge
+            peut atteindre des T° carbonisant son bobinage et enflammant les matériaux proches.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">🔧 Maintenance insuffisante</div>
+            <p>Filtres obstrués (ventilation, aspiration industrielle), fuites de fluides hydrauliques
+            inflammables sur pièces chaudes, clapets de non-retour défaillants.</p>
+          </div>
+          <div class="mini-card green">
+            <div class="mini-card-title">💨 Fuite de gaz / fluides</div>
+            <p>Vannes défaillantes, raccords mal serrés, corrosion de tuyauteries.
+            Une fuite minime peut, en quelques minutes, former un mélange explosif (LIE atteinte).</p>
+          </div>
+        </div>
+
+        <div class="infobox">
+          <strong>Statistiques CNPP (Centre National de Prévention et de Protection) :</strong><br>
+          Défaillances électriques : ~30 % des incendies professionnels ·
+          Travaux par point chaud : 15-20 % ·
+          Malveillance + imprudences : ~50 %
+        </div>
+		<img class="image"  src="./img/causes-tech.png"alt="les causes d'origine technique" />
+      `
+    }
+  ],
+
+  checklist: [
+    "Cuisine : 1ʳᵉ cause d'incendie en habitation (friture, flamme nue non surveillée).",
+    "Défaillances électriques : 1ʳᵉ cause en milieu professionnel (~30 %).",
+    "Chiffons huileux entassés = combustion spontanée possible — stocker à plat et aérés.",
+    "Travaux par point chaud : permis de feu obligatoire.",
+    "Fuite de gaz à la LIE = poche explosive — interdire toute source d'ignition."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 4 — Modes de propagation                            ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 4, icon: "🌊", icClass: "ic-red",
+  title: "Modes de propagation du feu",
+  sections: [
+
+    // ── Section 4.1 ─────────────────────────────────────────────
+    {
+      title: "Les 4 modes de propagation",
+      content: `
+        <div class="prose">
+          <p>
+            Une fois déclenché, l'incendie se propage selon quatre mécanismes physiques
+            qui peuvent agir <strong>simultanément</strong>. Comprendre ces modes est essentiel
+            pour concevoir les dispositifs de compartimentage et de désenfumage.
+          </p>
+        </div>
+
+        <div class="prop-grid">
+          <div class="prop-card" style="border-color:#f09595;background:#fef8f8">
+            <div class="prop-card-head"><div class="prop-card-icon">🌡️</div>
+              <div class="prop-card-title" style="color:#a32d2d">Rayonnement</div></div>
+            <p><strong>Principe :</strong> Transfert d'énergie par ondes infrarouges, sans support matériel,
+            à la vitesse de la lumière.</p>
+            <p><strong>Caractéristique :</strong> Agit à distance. Un obstacle opaque (mur, rideau thermique)
+            suffit à le bloquer. Un vitrage simple laisse passer ~90 % du rayonnement IR.</p>
+            <p class="exemple">💡 Exemple : Un feu de forêt peut enflammer un bâtiment à 50-100 m de distance
+            uniquement par rayonnement.</p>
+          </div>
+          <div class="prop-card" style="border-color:#85b7eb;background:#f4f8fd">
+            <div class="prop-card-head"><div class="prop-card-icon">🔗</div>
+              <div class="prop-card-title" style="color:#0c447c">Conduction</div></div>
+            <p><strong>Principe :</strong> Transfert de chaleur par contact direct au sein d'un matériau
+            ou entre matériaux en contact physique.</p>
+            <p><strong>Caractéristique :</strong> Progression silencieuse à travers les structures métalliques
+            (charpentes, tuyaux, canalisations) sans flamme visible.</p>
+            <p class="exemple">💡 Exemple : Un tuyau métallique traversant un mur coupe-feu peut conduire assez de chaleur
+            pour enflammer des matières de l'autre côté, même si le mur est intact.</p>
+          </div>
+          <div class="prop-card" style="border-color:#ef9f27;background:#fdf8f0">
+            <div class="prop-card-head"><div class="prop-card-icon">💨</div>
+              <div class="prop-card-title" style="color:#633806">Convection</div></div>
+            <p><strong>Principe :</strong> Transfert de chaleur par les mouvements de masse de gaz chauds.
+            Les gaz chauds montent (moins denses) et se propagent en plafond.</p>
+            <p><strong>Caractéristique :</strong> Mode le plus rapide en bâtiment. Fumées à 200-600 °C
+            s'infiltrant dans les faux-plafonds, gaines, conduits de ventilation.</p>
+            <p class="exemple">💡 Exemple : Un incendie au RDC peut provoquer des embrasements aux étages supérieurs
+            par les gaines d'ascenseur ou les cages d'escalier non compartimentées.</p>
+          </div>
+          <div class="prop-card" style="border-color:#97c459;background:#f5fbf0">
+            <div class="prop-card-head"><div class="prop-card-icon">💥</div>
+              <div class="prop-card-title" style="color:#27500a">Projection (convection forcée)</div></div>
+            <p><strong>Principe :</strong> Transport de brandons, d'escarbilles ou de fragments enflammés
+            par le vent ou les turbulences créées par le feu.</p>
+            <p><strong>Caractéristique :</strong> Mode le plus imprévisible. Crée des foyers secondaires
+            à distance, parfois à plusieurs kilomètres en feux de forêt intenses.</p>
+            <p class="exemple">💡 Exemple : Explosion d'un aérosol dans un entrepôt — des fragments enflammés
+            propagent simultanément l'incendie dans plusieurs zones.</p>
+          </div>
+        </div>
+
+        <img class="image"  src="./img/propagation-du-feu.png"alt="schéma des differents modes de propagation du feu" />
+      `
+    },
+
+    // ── Section 4.2 ─────────────────────────────────────────────
+    {
+      title: "Conséquences pratiques — compartimentage et ventilation",
+      content: `
+        <div class="prose">
+          <h4>Convection et gaines techniques</h4>
+          <p>
+            Les systèmes de ventilation et de climatisation peuvent <strong>accélérer dramatiquement</strong>
+            la propagation des fumées à travers tout un bâtiment. Les ERP doivent comporter
+            des <strong>clapets coupe-feu</strong> qui se ferment automatiquement lors du déclenchement
+            de l'alarme incendie, isolant chaque zone.
+          </p>
+
+          <h4>Conduction et traversées de parois</h4>
+          <p>
+            Chaque tuyau, câble ou conduit traversant une paroi coupe-feu est un point faible
+            potentiel. Ces traversées doivent être <strong>obturées par des produits coupe-feu</strong>
+            (mastics intumescents, colliers coupe-feu, manchons expansifs) pour maintenir
+            la résistance au feu de la paroi.
+          </p>
+
+          <h4>Rayonnement et distances d'isolement</h4>
+          <p>
+            Pour les entrepôts et bâtiments industriels, des distances d'isolement réglementaires
+            empêchent la propagation par rayonnement vers les bâtiments voisins.
+            Des façades résistantes au feu ou des murs-écrans peuvent compenser
+            une distance insuffisante.
+          </p>
+        </div>
+
+        <div class="infobox">
+          <strong>Pourquoi la convection est-elle la plus meurtrière ?</strong><br>
+          Les fumées chaudes et toxiques progressent bien plus vite que les flammes.
+          La majorité des victimes d'incendie meurent intoxiquées, loin du foyer initial,
+          souvent pendant leur sommeil ou dans des parties du bâtiment non atteintes par le feu.
+        </div>
+      `
+    }
+  ],
+
+  checklist: [
+    "4 modes : rayonnement, conduction, convection (fumées), projection (brandons).",
+    "Convection = fumées chaudes montantes — mode le plus rapide et meurtrier en bâtiment.",
+    "Conduction via métaux : propagation silencieuse sans flamme visible.",
+    "Traversées de parois CF : obligatoirement obturées (mastic, manchon coupe-feu).",
+    "Gaines de ventilation : clapets coupe-feu se ferment automatiquement à l'alarme."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 5 — Cinétique & flash-over                          ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 5, icon: "📈", icClass: "ic-red",
+  title: "Cinétique de l'incendie & flash-over",
+  sections: [
+
+    // ── Section 5.1 ─────────────────────────────────────────────
+    {
+      title: "Les 4 phases d'un incendie",
+      content: `
+        <div class="prose">
+          <p>
+            Un incendie suit une cinétique prévisible en 4 phases.
+            Identifier la phase en cours conditionne le choix d'intervention.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card green">
+            <div class="mini-card-title">Phase 1 — Éclosion</div>
+            <p>Source d'ignition enflamme le combustible. Chaleur faible, fumées limitées.
+            <strong>Intervention par extincteur portatif très efficace.</strong>
+            Durée : quelques secondes à quelques minutes.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">Phase 2 — Croissance</div>
+            <p>Flammes s'étendent, chaleur et fumées augmentent rapidement.
+            Convection commence à propager les fumées.
+            <strong>Extinction encore possible si intervention immédiate.</strong></p>
+          </div>
+          <div class="mini-card red">
+            <div class="mini-card-title">Phase 3 — Plein développement</div>
+            <p>Embrasement total de l'espace disponible. Températures 600–800 °C.
+            <strong>Toute intervention humaine directe est mortelle.</strong>
+            Seuls les sapeurs-pompiers équipés peuvent intervenir.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">Phase 4 — Déclin</div>
+            <p>Combustible s'épuise, températures baissent progressivement.
+            Risque de reprise sur braises cachées.
+            <strong>Surveillance obligatoire après extinction.</strong></p>
+          </div>
+        </div>
+
+
+        <img class="image"  src="./img/courbe-feu.png"alt="Courbe de developpement du feu" />
+      `
+    },
+
+    // ── Section 5.2 ─────────────────────────────────────────────
+    {
+      title: "Le flash-over — danger extrême",
+      content: `
+        <div class="prose">
+          <p>
+            Le <strong>flash-over</strong> (embrasement généralisé éclair) survient entre les phases 2 et 3.
+            Lorsque la température en plafond dépasse 500-600 °C, le rayonnement vers le bas
+            atteint l'ensemble des matériaux combustibles du local.
+            Tous s'embrasent simultanément en quelques secondes, portant la température à 800-1 000 °C.
+          </p>
+
+          <h4>Signes précurseurs à reconnaître</h4>
+          <ul>
+            <li>Couche de fumée dense et chaude qui descend vers le sol</li>
+            <li>Légère lueur orange sur la face inférieure des fumées (pyrolyse)</li>
+            <li>Chaleur intense ressentie au niveau du sol et sur les mains</li>
+            <li>Crépitements généralisés des matériaux environnants</li>
+          </ul>
+
+          <h4>Le backdraft</h4>
+          <p>
+            Un feu privé d'air dans un espace confiné peut s'étouffer progressivement
+            tout en conservant des braises actives. Si une ouverture soudaine (porte, fenêtre)
+            apporte un afflux d'air, les gaz combustibles accumulés peuvent s'enflammer
+            explosiveme­nt — c'est le <strong>backdraft</strong>.
+          </p>
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Flash-over : évacuation immédiate.</strong>
+          Si vous observez ces signes précurseurs, quittez le local <em>sans délai</em>
+          en fermant la porte derrière vous. Il est fatal en quelques secondes.
+          Aucune protection individuelle légère ne résiste à 800 °C.
+        </div>
+
+        <img class="image"  src="./img/fo-bd.png"alt="schéma comparatif flash-over / backdraft " />
+      `
+    }
+  ],
+
+  checklist: [
+    "4 phases : Éclosion → Croissance → Plein développement → Déclin.",
+    "Extincteur efficace en phase 1 et début phase 2 seulement — au-delà, évacuer.",
+    "Flash-over : embrasement généralisé soudain entre phases 2 et 3 (T° > 600 °C).",
+    "Signes précurseurs du flash-over : fumée descendante, lueur orange au sol.",
+    "Backdraft : explosion à l'ouverture d'un local confiné encore chaud — ne jamais ouvrir brusquement."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 6 — Conséquences sur l'être humain                  ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 6, icon: "🚑", icClass: "ic-red",
+  title: "Conséquences du feu sur l'être humain",
+  sections: [
+
+    // ── Section 6.1 ─────────────────────────────────────────────
+    {
+      title: "Les effets physiques du feu",
+      content: `
+        <div class="prose">
+          <p>
+            Le feu agit sur l'être humain selon quatre mécanismes principaux,
+            qui peuvent se combiner et agir à distance du foyer.
+          </p>
+
+          <h4>1. Brûlures thermiques</h4>
+          <p>
+            Résultent du contact direct avec des flammes, gaz chauds ou surfaces surchauffées.
+            Classées selon la profondeur de l'atteinte :
+          </p>
+          <ul>
+            <li><strong>1er degré</strong> : rougeur (érythème), douleur vive — guérison rapide sans séquelle.</li>
+            <li><strong>2e degré superficiel</strong> : phlyctènes (cloques), très douloureux, risque infectieux élevé.</li>
+            <li><strong>2e degré profond / 3e degré</strong> : destruction complète des tissus,
+            insensible (nerfs détruits), greffe cutanée indispensable.</li>
+          </ul>
+
+          <h4>2. Inhalation de fumées — 1ʳᵉ cause de décès (~70 %)</h4>
+          <p>
+            Les fumées d'incendie contiennent de nombreux gaz toxiques produits par la
+            combustion incomplète des matériaux : <strong>monoxyde de carbone (CO)</strong>,
+            acide cyanhydrique (HCN), phosgène, dioxyde de soufre, oxydes d'azote...
+          </p>
+
+          <h4>3. Rayonnement thermique à distance</h4>
+          <p>
+            La peau supporte ~1 kW/m² pendant quelques minutes, mais à 10 kW/m²,
+            les brûlures apparaissent en quelques secondes.
+            À 50 kW/m², les vêtements s'enflamment spontanément.
+          </p>
+
+          <h4>4. Anoxie (manque d'oxygène)</h4>
+          <p>
+            Survient quand la teneur en O₂ de l'air descend sous 16 % (normal : 21 %).
+            En dessous de 10 %, perte de connaissance rapide.
+            En dessous de 6 %, la mort survient quasi immédiatement.
+          </p>
+        </div>
+
+        <div class="orangebox">
+          <strong>⚠ Monoxyde de carbone (CO) — le tueur silencieux :</strong><br>
+          Incolore, inodore, indétectable sans capteur spécifique.
+          Se fixe sur l'hémoglobine avec une affinité 200 fois supérieure à l'oxygène,
+          bloquant l'oxygénation cellulaire. Cause la majorité des décès par intoxication.
+          Symptômes : maux de tête, nausées, confusion — souvent confondus avec une grippe.
+        </div>
+
+        <div class="warnbox">
+          <strong>Réflexe vital :</strong> La fumée chaude monte et s'accumule en plafond.
+          Se déplacer <em>à genoux ou accroupi</em> — la couche d'air respirable
+          subsiste quelques dizaines de centimètres au-dessus du sol.
+        </div>
+
+        <img class="image"  src="./img/effets-du-feu.png"alt="schéma des effets du feu sur le corps humain" />
+        
+      `
+    }
+  ],
+
+  checklist: [
+    "L'inhalation de fumées cause ~70 % des décès lors d'incendies.",
+    "CO (monoxyde de carbone) : incolore, inodore — indétectable sans capteur.",
+    "Le CO se fixe sur l'hémoglobine 200× mieux que l'O₂ — bloque l'oxygénation cellulaire.",
+    "Anoxie sous 16 % d'O₂ — mort quasi immédiate sous 6 %.",
+    "Brûlures 3e degré : destruction complète, insensible, greffe obligatoire.",
+    "En cas de fumée : se déplacer accroupi ou à genoux — l'air respirable est au niveau du sol."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 7 — Classes de feux                                                                                      ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 7, icon: "🏷️", icClass: "ic-purple",
+  title: "Classification des feux",
+  sections: [
+
+    // ── Section 7.1 ─────────────────────────────────────────────
+    {
+      title: "Classes A, B, C, D, F et risque électrique",
+      content: `
+        <div class="prose">
+          <p>
+            Les feux sont classés selon la nature du <strong>combustible</strong> impliqué.
+            Cette classification détermine directement le choix de l'agent extincteur.
+            Un mauvais choix peut aggraver dramatiquement la situation.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card red">
+            <img class="image" style="width: 64px; "  src="./img/classe-feu-A.png"alt="Classe de feu A" />
+            <div class="mini-card-title"> Classe A — Solides</div>
+            <p>Bois, papier, carton, tissu, paille, caoutchouc, plastiques...
+            Combustion avec formation de braises.
+            Extinction principale : refroidissement par eau.</p>
+          </div>
+          <div class="mini-card orange">
+            <img class="image" style="width: 64px; "  src="./img/classe-feu-B.png"alt="Classe de feu B" />
+            <div class="mini-card-title">🟧 Classe B — Liquides</div>
+            <p>Essence, gazole, alcool, solvants, peintures, fioul, goudron, cires...
+            Extinction : étouffement (mousse, CO₂, poudre).
+            L'eau projette des gouttelettes enflammées.</p>
+          </div>
+          <div class="mini-card blue">
+            <img class="image" style="width: 64px; "  src="./img/classe-feu-C.png"alt="Classe de feu C" />
+            <div class="mini-card-title">🟦 Classe C — Gaz</div>
+            <p>Propane, butane, méthane, acétylène, hydrogène...
+            <strong>Couper l'alimentation avant toute extinction</strong>.
+            Risque d'explosion si le gaz continue à fuir.</p>
+          </div>
+          <div class="mini-card purple">
+            <img class="image" style="width: 64px; "  src="./img/classe-feu-D.png"alt="Classe de feu D" />
+            <div class="mini-card-title">🟪 Classe D — Métaux</div>
+            <p>Magnésium, sodium, potassium, titane, aluminium en poudre...
+            Agents spécifiques (poudre D) obligatoires.
+            L'eau provoque des réactions violentes et dangereuses.</p>
+          </div>
+          <div class="mini-card green">
+            <img class="image" style="width: 64px; "  src="./img/classe-feu-F.png"alt="Classe de feu F" />
+            <div class="mini-card-title">🟩 Classe F — Graisses</div>
+            <p>Huiles et graisses de cuisson.
+            <strong>Eau absolument interdite</strong> : vaporisation explosive (BLEVE).
+            Couverture anti-feu ou agent classe F uniquement.</p>
+          </div>
+          <div class="mini-card gray">
+            <img class="image" style="width: 64px; "  src="./img/risque-elec.png"alt="Risque Electrique" />
+            <div class="mini-card-title">⚡ Risque électrique</div>
+            <p>Ce n'est plus une classe de feu, l'ancienne classe E. Un risque associé à tout feu sur installation sous tension.
+            Agent <strong>non conducteur obligatoire</strong> (CO₂, poudre ABC, eau pulverisée AVEC ADDITIF ).</p> 
+            </p>
+          </div>
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Eau + Electricité = DANGER</strong><br>
+            Les extincteurs à eau crééent un risque d'électrisation/électrocution sur un appareil eeclectrique supérieur à 1000 volts.</br>
+            Eviter d'utiliser un extincteur Eau sans additif, et surveiller le ruissellement : EViter les pieds dans l'eau.
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Eau + graisse de cuisson = catastrophe (BLEVE)</strong><br>
+          La vaporisation instantanée (eau à 100°C, huile à 300°C+) crée une colonne
+          de vapeur explosive projetant des gouttelettes d'huile enflammée sur plusieurs mètres.
+          C'est l'une des premières causes de grands brûlés graves en cuisine.
+        </div>
+      `
+    }
+  ],
+
+  checklist: [
+    "Classe A = solides (bois, papier, tissu) — extinction par refroidissement (eau).",
+    "Classe B = liquides inflammables — extinction par étouffement (CO₂, mousse, poudre).",
+    "Classe C = gaz : couper l'alimentation AVANT d'intervenir.",
+    "Classe D = métaux : poudre D spécifique — l'eau réagit violemment.",
+    "Classe F = graisses de cuisson : couverture anti-feu UNIQUEMENT — jamais d'eau.",
+    "Risque électrique : agent non conducteur (CO₂ ou poudre ABC) — jamais d'eau sous tension."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 8 — Alerter                                         ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 8, icon: "🔔", icClass: "ic-blue",
+  title: "Alerter — Donner l'alarme et l'alerte",
+  sections: [
+
+    // ── Section 8.1 ─────────────────────────────────────────────
+    {
+      title: "Donner l'alerte",
+      content: `
+        <div class="prose">
+          <h4>Alarme vs Alerte</h4>
+          <ul>
+            <li><strong>L'alarme</strong> : signal sonore destiné aux occupants pour déclencher l'évacuation.
+            Toute personne entendant ce signal doit évacuer immédiatement.</li>
+            <li><strong>L'alerte</strong> : appel aux services de secours extérieurs (pompiers, SAMU).
+            À effectuer en parallèle ou immédiatement après avoir déclenché l'alarme.</li>
+          </ul>
+
+          <h4>Donner l'alerte aux pompiers</h4>
+          <ul>
+            <li>Appeler le <strong>18</strong> (pompiers) ou le <strong>112</strong> (numéro européen)</li>
+            <li>Préciser : adresse exacte et point d'accès, nature et étendue du sinistre,
+            nombre de personnes impliquées ou bloquées</li>
+            <li><strong>Ne pas raccrocher avant d'y être invité</strong> par l'opérateur</li>
+          </ul>
+        </div>
+
+        <div class="tipbox">
+          <strong>Séquence optimale face à un départ de feu :</strong><br>
+          (1) Déclencher l'alarme · (2) Appeler les secours (18 ou 112) ·
+          (3) Attaquer si possible et sans se mettre en danger (feu naissant) ·
+          (4) Évacuer en refermant les portes coupe-feu derrière soi pour cloisonner le feu.
+        </div>
+		
+		<img class="image"  src="./img/dm.png" width="240px" alt="déclencheur manuel du système de sécurité incendie" />
+
+      `
+    }
+  ],
+
+  checklist: [
+    "Alarme (EVASAN) = signal aux occupants — évacuation immédiate sans discussion.",
+    "Alerte = appel secours extérieurs : 18 (pompiers) ou 112.",
+    "Ne pas raccrocher avant d'y être invité par l'opérateur secours.",
+    "Séquence : Alarme → Alerte → Attaque (si possible) → Évacuation."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 9 — Évacuer                                         ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 9, icon: "🚪", icClass: "ic-blue",
+  title: "Évacuer — Organisation et rôles",
+  sections: [
+
+    // ── Section 9.1 ─────────────────────────────────────────────
+    {
+      title: "Organisation de l'évacuation",
+      content: `
+        <div class="prose">
+          <p>
+            L'évacuation doit être <strong>rapide, ordonnée et complète</strong>.
+            Elle repose sur une organisation préétablie et des rôles clairement définis et connus de tous.
+          </p>
+
+          <h4>Le guide-file</h4>
+          <p>
+            En tête du groupe. Il ouvre les portes en les refermant derrière lui pour ralentir
+            le feu et les fumées. Il vérifie visuellement le chemin d'évacuation
+            et conduit les occupants au point de rassemblement sans courir.
+          </p>
+
+          <h4>Le serre-file</h4>
+          <p>
+            Ferme la marche. Il vérifie que chaque pièce est vide (y compris sanitaires,
+            armoires de stockage, bureaux fermés). Il ferme toutes les portes derrière lui
+            et rend compte au responsable au point de rassemblement.
+          </p>
+
+          <h4>Personnes à Mobilité Réduite (PMR)</h4>
+          <p>
+            Prise en charge spécifique planifiée à l'avance et exercée régulièrement.
+            Si les escaliers sont impraticables, direction vers l'<strong>Espace d'Attente Sécurisé (EAS)</strong> :
+            zone protégée résistant au feu, dotée d'un moyen de communication pour
+            avertir les secours de la présence de personnes en attente.
+          </p>
+
+          <h4>Point de rassemblement</h4>
+          <p>
+            Le serre-file effectue un comptage précis communiqué au responsable désigné.
+            <strong>Personne ne retourne dans le bâtiment</strong> sans autorisation explicite
+            des services de secours — même pour récupérer des effets personnels.
+          </p>
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Erreurs fréquentes à éviter :</strong>
+          <ul style="margin-top:.4rem">
+            <li>Utiliser les ascenseurs (strictement interdit — panne possible au niveau du feu)</li>
+            <li>Retourner chercher des affaires personnelles</li>
+            <li>Bloquer les portes coupe-feu en position ouverte</li>
+            <li>Ne pas vérifier toutes les pièces (rôle du serre-file)</li>
+            <li>Quitter le point de rassemblement avant le comptage</li>
+          </ul>
+        </div>
+
+        <div class="infobox">
+          <strong>Exercices d'évacuation :</strong>
+          Obligatoire au moins une fois par an dans les ERP.
+          Deux fois par an pour les établissements avec hébergement (personnes couchées).
+          À consigner dans le registre de sécurité avec heure, durée et observations.
+        </div>
+
+		<img class="image"  src="./img/evacuation.png" alt="schéma d'une évacuation avec guide-file et serre-file " />
+      `
+    }
+  ],
+
+  checklist: [
+    "Guide-file = tête du groupe, ferme les portes derrière lui.",
+    "Serre-file = vérifie chaque pièce, ferme les portes, rend compte au comptage.",
+    "Ascenseurs : strictement interdits lors d'une évacuation incendie.",
+    "PMR : Espace d'Attente Sécurisé (EAS) avec moyen de communication vers les secours.",
+    "Point de rassemblement : comptage obligatoire, aucun retour sans autorisation.",
+    "Exercices : 1 fois/an minimum (2 fois pour établissements avec hébergement)."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 10 — Extincteurs                                    ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 10, icon: "🧯", icClass: "ic-orange",
+  title: "Extincteurs — Choisir, utiliser, vérifier",
+  sections: [
+
+    // ── Section 10.1 — Extincteurs ───────────────────────────────
+    {
+      title: "1. Extincteurs",
+      content: `
+        <div class="prose">
+            <h2>L'Extincteur : Premier rempart contre l'incendie</h2>
+
+            <p>L'extincteur est un <strong>moyen de première intervention</strong> mis à la disposition de tous. Ce dispositif de sécurité est spécifiquement conçu pour projeter un agent extincteur afin de maîtriser ou d'éteindre un départ de feu avant qu'il ne se propage.</p>
+
+            <div class="highlight">
+                <p>Il se présente sous la forme d'un réservoir normalisé de <strong>couleur rouge</strong>, identifié par une signalétique précise. Selon le modèle, il fonctionne sous pression permanente ou auxiliaire pour expulser divers agents (eau, mousse, poudre, ou CO₂) capables d'étouffer, de refroidir ou d'interrompre la combustion.</p>
+            </div>
+
+            <h3>Classifications de l'appareil</h3>
+            <p>On distingue deux catégories principales selon le poids et la mobilité :</p>
+            <ul>
+                <li><strong>Appareils portatifs :</strong> maniables à la main, leur poids est inférieur ou égal à 20 kg.</li>
+                <li><strong>Appareils mobiles :</strong> Sur roulettes, destinés aux interventions plus importantes, leur masse peut atteindre 250 kg.</li>
+            </ul>
+
+        <p>Chaque type d'extincteur est conçu pour agir sur des types de feux spécifiques (appelés "classes de feux"). Utiliser le mauvais agent peut être inefficace, voire extrêmement dangereux.</p>
+         <img class="image"  src="./img/extincteurs.png"alt="Types d'extincteurs" />
+
+      </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+                <th>Type</th>
+                <th>Agent extincteur</th>
+                <th><img class="image" style="width: 42px; "  src="./img/classe-feu-A.png"alt="Classe de feu A" /></th>
+                <th><img class="image" style="width: 42px; "  src="./img/classe-feu-B.png"alt="Classe de feu B" /></th>
+                <th><img class="image" style="width: 42px; "  src="./img/classe-feu-C.png"alt="Classe de feu C" /></th>
+                <th><img class="image" style="width: 42px; "  src="./img/classe-feu-F.png"alt="Classe de feu F" /></th>
+                <th><img class="image" style="width: 42px; "  src="./img/risque-elec.png"alt="Risque Electrique" /></th>
+                <th>Mécanisme principal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td> Eau pulvérisée (sans additif)</td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td>Refroidissement</td></tr>
+            <tr><td>AB</td><td>Eau + additif </td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="warn"><img class="image" style="width: 16px;"  src="./img/true.png" />&lt;1 kV</td><td>Refroidissement + étouffement</td></tr>
+            <tr><td>ABC</td><td>Poudre ABC (polyvalente)</td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td>Inhibition chimique + étouffement</td></tr>
+            <tr><td>B</td><td>CO₂ (gaz carbonique)</td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="ok"><img class="image" style="width: 24px; filter: hue-rotate(100deg)"  src="./img/true.png" /></td><td>Étouffement (dilution O₂)</td></tr>
+            <tr><td>AFFF</td><td>Mousse AFFF</td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td>Étouffement (film de surface)</td></tr>
+            <tr><td>F</td><td>Agent classe F (saponification)</td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="ok"><img class="image" style="width: 24px; "  src="./img/true.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td>Saponification + refroidissement</td></tr>
+            <tr><td>D</td><td>Poudre D (métaux)</td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td class="no"><img class="image" style="width: 24px; "  src="./img/false.png" /></td><td>Étouffement spécifique métaux</td></tr>
+          </tbody>
+        </table>
+
+        <div class="prose">
+          <h4>Particularités à retenir</h4>
+          <ul>
+            <li><strong>CO₂ ★ meilleur choix sur risque électrique</strong> : non conducteur, aucun résidu,
+            s'évapore totalement. Attention : la lance peut atteindre −78 °C — tenir par la poignée isolante uniquement.</li>
+            <li><strong>Poudre ABC</strong> : polyvalente mais très salissante.
+            Déconseillée sur électronique sensible (les fines particules se déposent et court-circuitent les composants).</li>
+            <li><strong>Eau + additif mouillant</strong> : améliore la pénétration dans les matériaux poreux (classe A)
+            et permet d'agir sur certains feux classe B par formation d'un film d'émulsion.</li>
+          </ul>
+        </div>
+      `
+    },
+
+    // ── Section 10.2 — Utilisation ───────────────────────────────
+    {
+      title: "Utilisation d'un extincteur",
+      content: `
+        <div class="prose">
+          <p>
+           Description des étapes d'utilisation, pour manipuler des extincteurs en toute sécurité.'
+          </p>
+        </div>
+
+        <div>
+          <div style="border-left:4px solid #534ab7;background:#f0eeff;border-radius:6px;padding:.75rem 1rem;margin-bottom:.625rem;display:flex;gap:.875rem;align-items:flex-start">
+            <div style="font-size:22px;font-weight:900;color:#534ab7;flex-shrink:0">1</div>
+            <p><strong style="color:#534ab7">Tirer la goupille</strong><br>
+            Retirer ou percuter la goupille de sécurité pour armer l'extincteur. Sans cette étape, il est impossible de déclencher la décharge.</p>
+          </div>
+
+          <div style="border-left:4px solid #854f0b;background:#faeeda;border-radius:6px;padding:.75rem 1rem;margin-bottom:.625rem;display:flex;gap:.875rem;align-items:flex-start">
+            <div style="font-size:22px;font-weight:900;color:#854f0b;flex-shrink:0">2</div>
+            <p><strong style="color:#854f0b">Percuter</strong><br>
+            Appuyer sur la poignée pour percuter la cartouche de CO2, et mettre l'extincteur en pression. Tourner la tête en le faisant pour éviter d'être blessé si la tête de l'exticnteur est incorrectement scellée.</p>
+          </div>
+
+          <div style="border-left:4px solid #a32d2d;background:#fcebeb;border-radius:6px;padding:.75rem 1rem;margin-bottom:.625rem;display:flex;gap:.875rem;align-items:flex-start">
+            <div style="font-size:22px;font-weight:900;color:#a32d2d;flex-shrink:0">3</div>
+            <p><strong style="color:#a32d2d">Tester l'extincteur</strong><br>
+            Comprimer la poignée de déclenchement un court instant pour libérer l'agent, et s'assurer que l'extincteur fonctionne correctement. </p>
+          </div>
+
+          <div style="border-left:4px solid #854f0b;background:#faeeda;border-radius:6px;padding:.75rem 1rem;margin-bottom:.625rem;display:flex;gap:.875rem;align-items:flex-start">
+            <div style="font-size:22px;font-weight:900;color:#854f0b;flex-shrink:0">4</div>
+            <p><strong style="color:#854f0b">Approcher à bonne distance</strong><br>
+            S'approcher en se positionnant vent dans le dos. Distance efficace : 2-4 m (CO₂), 3-6 m (poudre/eau). Toujours garder une issue de secours dans le dos.</p>
+          </div>
+
+          <div style="border-left:4px solid #27500a;background:#eaf3de;border-radius:6px;padding:.75rem 1rem;margin-bottom:.625rem;display:flex;gap:.875rem;align-items:flex-start">
+            <div style="font-size:22px;font-weight:900;color:#27500a;flex-shrink:0">5</div>
+            <p><strong style="color:#27500a">Balayer la base</strong><br>
+            Balayer le foyer par mouvements latéraux réguliers. Viser toujours <strong>la base des flammes</strong> (le combustible), jamais les flammes elles-mêmes.</br></br>
+            Durée limitée : 30 secondes à 2 minutes selon la taille.</p>
+          </div>
+        </div>
+
+        <img class="image"  src="./img/fonctionnement-extincteur.png"alt="Fonctionnement extincteurs" />
+
+        <div class="tipbox">
+          <strong>✔ Bons réflexes avant d'intervenir :</strong><br>
+          Donner l'alarme et appeler les secours AVANT d'utiliser l'extincteur ·
+          N'intervenir qu'en phase 1 ou début phase 2 · Ne jamais se laisser encercler ·
+          Si le feu grossit ou vous met en danger : abandonnez et évacuez immédiatement.
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Extincteur utilisé même partiellement = à réviser immédiatement.</strong>
+          Un extincteur qui a été déclenché ne peut pas être rescellé sans contrôle professionnel.
+          Ne jamais remettre en place un extincteur vide ou dont le scellé est brisé.
+        </div>
+      `
+    },
+
+    // ── Section 10.3 — Implantation & maintenance ────────────────
+    {
+      title: "Implantation réglementaire & maintenance",
+      content: `
+        <div class="prose">
+          <h4>Règles d'implantation</h4>
+          <ul>
+            <li><strong>Densité :</strong> 1 extincteur portatif minimum par 200 m² de surface</li>
+            <li><strong>Distance d'accès maximale :</strong> 15 m pour atteindre un extincteur</li>
+            <li><strong>Hauteur de fixation :</strong> poignée entre 0,90 m et 1,20 m du sol</li>
+            <li><strong>Signalisation :</strong> panneau normalisé rouge avec flèche vers le bas</li>
+            <li><strong>Emplacements préférentiels :</strong> sorties de local, couloirs, à proximité des risques identifiés</li>
+            <li><strong>Interdit :</strong> obstruer l'accès, couvrir, déplacer sans raison, utiliser comme cale-porte</li>
+          </ul>
+
+          <h4>Programme de vérification</h4>
+        </div>
+
+        <div class="card-grid-3">
+          <div class="mini-card red">
+            <div class="mini-card-title">📅 Mensuelle (utilisateur)</div>
+            <ul>
+              <li>Présence à son emplacement</li>
+              <li>Accès non obstrué</li>
+              <li>Scellé intact</li>
+              <li>Manomètre dans le vert</li>
+              <li>Absence de dommages visibles</li>
+            </ul>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">📅 Annuelle (technicien agréé)</div>
+            <ul>
+              <li>Contrôle de l'agent extincteur</li>
+              <li>Vérification de la pression</li>
+              <li>Contrôle du dispositif de mise en pression</li>
+              <li>Étiquette datée et signée</li>
+              <li>Remplacement si nécessaire</li>
+            </ul>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">📅 Décennale</div>
+            <ul>
+              <li>Révision complète ou remplacement</li>
+              <li>Épreuve hydraulique du corps</li>
+              <li>Recharge certifiée</li>
+            </ul>
+          </div>
+        </div>
+
+        <img class="image"  src="./img/ext_desc.png"alt="Description d'un extincteur" />
+      `
+    },
+
+  ],
+
+  checklist: [
+    "Donner l'alarme AVANT d'utiliser l'extincteur.",
+    "PASS : Percuter, Approcher (vent dans le dos), Serrer la poignée, Sweep (base des flammes).",
+    "CO₂ : meilleur choix sur risque électrique — non conducteur, sans résidu.",
+    "1 extincteur minimum par 200 m² — accès en moins de 15 m.",
+    "Extincteur déclenché (même partiellement) = révision immédiate obligatoire."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 11 — Autres moyens d'extinction                     ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 11, icon: "🪣", icClass: "ic-teal",
+  title: "Autres moyens d’extinction",
+  sections: [
+    {
+      title: "Couverture anti-feu, RIA, seau de sable",
+      content: `
+        <div class="prose">
+          <p>
+            Au-delà des extincteurs portatifs, plusieurs autres moyens de première intervention
+            peuvent être disponibles dans un bâtiment. Chacun répond à des situations spécifiques
+            et nécessite de connaître son mode d'emploi avant d'en avoir besoin.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card teal">
+            <div class="mini-card-title">🧣 Couverture anti-feu</div>
+            <p><strong>Usage :</strong> étouffement d'un feu de poêle, friteuse, vêtements en feu.<br>
+            <strong>Mode d'emploi :</strong> déplier, approcher en protégeant les mains, jeter sur le foyer
+            d'un seul geste. Laisser en place plusieurs minutes — ne jamais soulever pour vérifier.<br>
+            <strong>Avantage :</strong> simple, rapide, silencieuse, aucune projection.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">💧 Robinet d'Incendie Armé (RIA)</div>
+            <p><strong>Usage :</strong> feux de classe A, premier jet de grande puissance.<br>
+            <strong>Mode d'emploi :</strong> dévidoir fixe alimenté en eau sous pression permanente.
+            Dérouler le tuyau, ouvrir la vanne, diriger le jet à la base des flammes.<br>
+            <strong>Avantage :</strong> débit important, durée illimitée si réseau alimenté.<br>
+            <strong>Nécessite une formation spécifique.</strong></p>
+          </div>
+          <div class="mini-card gray">
+            <div class="mini-card-title">🪣 Seau de sable</div>
+            <p><strong>Usage :</strong> étouffement des feux de métaux (classe D) ou de liquides
+            inflammables de petite surface.<br>
+            <strong>Mode d'emploi :</strong> verser le sable sur le foyer pour étouffer les braises
+            et absorber les liquides. Ne pas projeter violemment.<br>
+            <strong>Avantage :</strong> neutre chimiquement, sans risque de réaction.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">💦 Sprinkleurs (extinction automatique)</div>
+            <p>Têtes thermosensibles qui s'ouvrent individuellement à 68–93 °C.
+            Couvrent uniquement la zone du foyer — contrairement aux idées reçues,
+            ils ne s'activent pas tous simultanément.<br>
+            Obligation réglementaire dans certains ERP et entrepôts logistiques.</p>
+          </div>
+        </div>
+
+        <div class="tipbox">
+          <strong>✔ Règle d'or : connaître les équipements AVANT l'urgence.</strong><br>
+          Repérer l'emplacement de chaque moyen d'extinction dès votre arrivée dans un lieu.
+          Un moyen d'extinction inconnu ou inaccessible est un moyen inutile.
+        </div>
+
+        <img class="image" src="./img/materiel-incendie.png" alt="Autres matériels de sécurité incendie" />
+      `
+    }
+  ],
+  checklist: [
+    "Couverture anti-feu : jeter d'un seul geste, laisser en place — ne jamais soulever.",
+    "RIA : débit illimité mais formation spécifique obligatoire avant utilisation.",
+    "Seau de sable : feux de métaux (classe D) ou petite surface de liquide.",
+    "Sprinkleurs : activation individuelle par tête thermosensible — pas d'activation générale.",
+    "Repérer l'emplacement de tous les moyens d'extinction dès l'arrivée dans un lieu."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 12 — Prévention & bâtiment                          ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 12, icon: "🛡️", icClass: "ic-green",
+  title: "Prévention incendie & protection du bâtiment",
+  sections: [
+
+    // ── Section 9.1 ─────────────────────────────────────────────
+    {
+      title: "Mesures de prévention organisationnelles",
+      content: `
+        <div class="prose">
+          <p>
+            La prévention consiste à <strong>agir avant le sinistre</strong> pour supprimer ou réduire
+            les conditions permettant à un incendie de naître ou de se propager.
+          </p>
+
+          <h4>Mesures techniques</h4>
+          <ul>
+            <li>Installations électriques conformes à la norme et contrôlées périodiquement</li>
+            <li>Disjoncteurs différentiels et fusibles correctement calibrés</li>
+            <li>Détecteurs de fumée, chaleur ou gaz : fonctionnels et testés régulièrement</li>
+            <li>Systèmes d'extinction automatique (sprinkleurs) dans les locaux à risques</li>
+            <li>Clapets coupe-feu dans les gaines de ventilation</li>
+          </ul>
+
+          <h4>Mesures organisationnelles</h4>
+          <ul>
+            <li>Allées, couloirs et dégagements libres de tout obstacle en permanence</li>
+            <li>Matières inflammables en armoires agréées, quantités réglementées</li>
+            <li><strong>Registre de sécurité</strong> tenu à jour : consignes, exercices, vérifications, incidents</li>
+            <li>Consignes incendie affichées dans chaque local et à chaque sortie</li>
+            <li>Formation du personnel aux risques, équipements et conduites à tenir</li>
+            <li><strong>Permis de feu</strong> obligatoire pour tout travail par point chaud</li>
+          </ul>
+        </div>
+
+        <div class="tipbox">
+          <strong>✔ Responsabilité partagée :</strong> Tout salarié peut et doit signaler
+          immédiatement tout risque identifié — installation défectueuse, stockage dangereux,
+          dégagement obstrué. Ne pas attendre la prochaine réunion sécurité.
+        </div>
+      `
+    },
+
+    // ── Section 9.2 ─────────────────────────────────────────────
+    {
+      title: "Résistance au feu des bâtiments — REI et compartimentage",
+      content: `
+        <div class="prose">
+          <p>
+            La réglementation impose aux bâtiments des critères de résistance au feu
+            pour <strong>limiter la propagation</strong> et garantir l'évacuation des occupants.
+          </p>
+
+          <h4>Classification REI</h4>
+          <p>La résistance au feu d'un élément de construction s'exprime par des lettres
+          suivies d'une durée en minutes :</p>
+        </div>
+
+        <div class="card-grid-3">
+          <div class="mini-card red">
+            <div class="mini-card-title">R — Résistance mécanique</div>
+            <p>L'élément porteur conserve sa capacité structurelle sans s'effondrer pendant la durée indiquée.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">E — Étanchéité</div>
+            <p>L'élément s'oppose au passage des flammes et des gaz chauds vers la face non exposée.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">I — Isolation thermique</div>
+            <p>La face non exposée ne dépasse pas 140 °C en moyenne (+ 180 °C en tout point).</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>
+            Exemples : <strong>REI 60</strong> = résistant, étanche et isolant 60 min.
+            <strong>EI 30</strong> = étanche et isolant 30 min (cloison non porteuse).
+            <strong>R 90</strong> = porteur uniquement pendant 90 min.
+          </p>
+
+          <h4>Compartimentage</h4>
+          <p>
+            Diviser le bâtiment en zones étanches au feu (compartiments) via des parois,
+            planchers et portes coupe-feu. Objectif : confiner l'incendie dans une zone
+            le temps que les secours interviennent et protéger les voies d'évacuation.
+          </p>
+		  	<img class="image"  src="./img/compartimentage.png" alt="schema de compartimentage d'une zone par des portes coupe-feu" />
+        </div>
+
+        <div class="warnbox">
+          <strong>⚠ Portes coupe-feu — règles absolues :</strong><br>
+          · Toujours fermées — ou à fermeture automatique au déclenchement de l'alarme.<br>
+          · Ne jamais les bloquer ouvertes (cale, meuble, extincteur...).<br>
+          · Une porte CF bloquée ouverte = compartimentage totalement annulé.
+        </div>
+
+        <div class="infobox">
+          <strong>Traversées de parois :</strong> Tout câble, tuyau ou conduit traversant
+          une paroi coupe-feu doit être obturé par un dispositif coupe-feu homologué
+          (mastic intumescent, collier coupe-feu, manchon expansif).
+        </div>
+      `
+    }
+  ],
+
+  checklist: [
+    "Dégagements et couloirs toujours libres de tout obstacle.",
+    "Registre de sécurité à jour : consignes, exercices, vérifications, incidents.",
+    "REI 60 = Résistance mécanique + Étanchéité + Isolation thermique pendant 60 min.",
+    "Portes coupe-feu : jamais bloquées ouvertes — fermeture automatique à l'alarme.",
+    "Permis de feu obligatoire pour tout travail par point chaud."
+  ]
+},
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  MODULE 13 — Pour aller plus loin                           ║
+// ╚══════════════════════════════════════════════════════════════╝
+{
+  num: 13, icon: "📚", icClass: "ic-yellow",
+  title: "Pour aller plus loin",
+  sections: [
+    {
+      title: "Textes réglementaires de référence",
+      content: `
+        <div class="prose">
+          <p>
+            La prévention incendie en France repose sur un cadre réglementaire précis.
+            Connaître les textes de référence permet de comprendre les obligations
+            et de se tenir informé des évolutions.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <div class="mini-card red">
+            <div class="mini-card-title">🏛️ Code du travail</div>
+            <p>Articles R. 4227-1 à R. 4227-57 : obligations de l'employeur en matière
+            de prévention incendie dans les établissements recevant des travailleurs.
+            Consignes, exercices, équipements, dégagements.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">🏢 ERP — Règlement de sécurité</div>
+            <p>Arrêté du 25 juin 1980 modifié (et arrêtés spécifiques par type) :
+            règles de construction, cloisonnement, désenfumage, alarme et évacuation
+            pour les Établissements Recevant du Public.</p>
+          </div>
+          <div class="mini-card blue">
+            <div class="mini-card-title">🏭 ICPE</div>
+            <p>Installations Classées pour la Protection de l'Environnement :
+            arrêtés de prescriptions générales et individuels selon la nature
+            et les quantités de produits dangereux stockés.</p>
+          </div>
+          <div class="mini-card purple">
+            <div class="mini-card-title">🏗️ Code de la construction</div>
+            <p>Règles de résistance au feu (REI), compartimentage, désenfumage
+            et voies d'accès pour les bâtiments neufs et les rénovations importantes.</p>
+          </div>
+        </div>
+      `
+    },
+    {
+      title: "Ressources et organismes utiles",
+      content: `
+        <div class="card-grid">
+          <div class="mini-card teal">
+            <div class="mini-card-title">🔬 INRS</div>
+            <p><strong>inrs.fr</strong> — Fiches pratiques, guides de prévention,
+            brochures téléchargeables sur tous les risques professionnels
+            dont le risque incendie/explosion.</p>
+          </div>
+          <div class="mini-card red">
+            <div class="mini-card-title">🛡️ CNPP</div>
+            <p><strong>cnpp.com</strong> — Référentiel technique, formations certifiantes,
+            audit et conseil en sécurité incendie.
+            Éditeur des normes françaises de référence.</p>
+          </div>
+          <div class="mini-card orange">
+            <div class="mini-card-title">🚒 SDIS</div>
+            <p>Service Départemental d'Incendie et de Secours de votre département.
+            Point de contact pour les visites de prévention, les avis sur les projets
+            de construction et les exercices d'évacuation.</p>
+          </div>
+          <div class="mini-card purple">
+            <div class="mini-card-title">📏 AFNOR / NF EN</div>
+            <p>Normes européennes et françaises applicables :
+            NF EN 3 (extincteurs portatifs), NF S 61-931 à 61-940 (SSI),
+            NF S 61-961 (RIA), EN 1869 (couvertures anti-feu).</p>
+          </div>
+        </div>
+
+        <div class="tipbox">
+          <strong>✔ Restez à jour :</strong> La réglementation évolue régulièrement.
+          Abonnez-vous aux newsletters de l'INRS et du CNPP, et vérifiez annuellement
+          que vos procédures internes sont conformes aux textes en vigueur.
+        </div>
+      `
+    }
+  ],
+  checklist: [
+    "Articles R. 4227-1 à R. 4227-57 du Code du travail : obligations incendie en entreprise.",
+    "ERP : arrêté du 25 juin 1980 modifié — règles de construction et d'évacuation."
+  ]
+}
+
+]; // fin MODULES
+
+// ================================================================
+// BANQUE DE 48 QUESTIONS — 13 modules
+// Chaque question a un index fixe (sa position dans le tableau).
+// Le quiz tire 10 questions au sort dans l'ensemble des 48.
+// ================================================================
+const ALL_QUIZ_QUESTIONS = [
+
+  // ── Module 1 — Le feu & le triangle (Q1–Q4) ──────────────────
+  /* Q1  */ {mod:1, q:"Quels sont les 3 éléments indispensables du triangle du feu ?", opts:["Flamme, fumée, chaleur","Combustible, comburant, énergie d'activation","Chaleur, oxygène, vapeur","Feu, eau, air"], correct:1, expl:"Combustible (matière qui brûle) + Comburant (O₂) + Énergie d'activation (source d'ignition). Supprimer l'un des trois suffit à éteindre le feu."},
+  /* Q2  */ {mod:1, q:"Supprimer lequel de ces éléments permet d'éteindre un feu ?", opts:["Le combustible uniquement","Le comburant uniquement","L'énergie uniquement","L'un quelconque des 3 éléments"], correct:3, expl:"Supprimer l'un quelconque des trois éléments du triangle suffit à éteindre ou prévenir l'incendie — c'est le principe de tout moyen d'extinction."},
+  /* Q3  */ {mod:1, q:"Un extincteur à CO₂ agit principalement par :", opts:["Refroidissement intense du foyer","Étouffement en diluant l'oxygène","Inhibition chimique de la réaction","Suppression du combustible"], correct:1, expl:"Le CO₂ agit par étouffement : en se diffusant, il dilue et chasse l'oxygène autour du foyer, abaissant sa concentration sous le seuil de combustion (~13 %)."},
+  /* Q4  */ {mod:1, q:"Pourquoi ne faut-il JAMAIS éteindre une flamme de gaz sans couper l'alimentation ?", opts:["Le gaz continuerait à fuir et pourrait former une poche explosive","Les pompiers doivent d'abord arriver","L'extincteur ne peut pas agir sur les gaz","La flamme protège contre la fuite"], correct:0, expl:"Sans coupure de l'alimentation, le gaz continue à fuir. Éteindre la flamme sans couper le gaz crée un risque d'explosion (accumulation jusqu'à la LIE) au moindre point chaud."},
+
+  // ── Module 2 — Combustibles & gaz (Q5–Q8) ────────────────────
+  /* Q5  */ {mod:2, q:"Le point d'éclair de l'essence est d'environ :", opts:["−40 °C","0 °C","55 °C","100 °C"], correct:0, expl:"L'essence a un point d'éclair d'environ −40 °C — dangereuse à toute température ambiante car elle émet en permanence des vapeurs inflammables."},
+  /* Q6  */ {mod:2, q:"La LIE (Limite Inférieure d'Explosivité) d'un gaz correspond à :", opts:["La limite au-dessus de laquelle le mélange est trop riche","La limite en dessous de laquelle le mélange est trop pauvre pour s'enflammer","La température d'auto-inflammation","La concentration maximum autorisée dans l'atmosphère"], correct:1, expl:"La LIE est la concentration minimale de gaz dans l'air en dessous de laquelle le mélange est trop pauvre pour s'enflammer. Entre LIE et LSE = zone explosive."},
+  /* Q7  */ {mod:2, q:"Le propane et le butane, en cas de fuite, s'accumulent :", opts:["En hauteur, près du plafond","Au niveau du sol, dans les caves et puisards","Uniformément dans tout le local","À mi-hauteur uniquement"], correct:1, expl:"Propane (densité 1,56) et butane (2,07) sont plus lourds que l'air. Ils descendent et s'accumulent au sol, dans les caves et les espaces confinés en bas."},
+  /* Q8  */ {mod:2, q:"Lors d'une fuite de gaz, quelle action est INTERDITE ?", opts:["Ouvrir les fenêtres pour ventiler","Couper l'alimentation en gaz","Allumer la lumière pour mieux voir","Évacuer le local immédiatement"], correct:2, expl:"Tout appareillage électrique (lumière, sonnette, interrupteur) peut créer une étincelle suffisante pour enflammer un mélange dans la zone d'explosivité."},
+
+  // ── Module 3 — Causes de départ (Q9–Q12) ─────────────────────
+  /* Q9  */ {mod:3, q:"Quelle est la 1ʳᵉ cause d'incendie en habitation ?", opts:["Les travaux par point chaud","La cuisine (friture, flamme nue)","Les installations électriques","La foudre"], correct:1, expl:"La cuisine est la première cause d'incendie en habitation : friture laissée sans surveillance, huile surchauffée (auto-inflammation ~360 °C), torchon trop proche d'une flamme."},
+  /* Q10 */ {mod:3, q:"Des chiffons imbibés d'huile de lin entassés peuvent :", opts:["Être stockés sans risque dans un local ventilé","S'enflammer spontanément par oxydation (combustion spontanée)","Seulement brûler si exposés à une flamme","Être jetés dans une poubelle ordinaire sans danger"], correct:1, expl:"La combustion spontanée : l'oxydation lente de l'huile de lin génère de la chaleur, qui s'accumule si les chiffons sont entassés et peut atteindre le point d'auto-inflammation."},
+  /* Q11 */ {mod:3, q:"La 1ʳᵉ cause technique d'incendie en milieu professionnel est :", opts:["Les travaux par point chaud","Les fuites de gaz combustible","Les installations électriques défectueuses","Les équipements de chauffage"], correct:2, expl:"Les défaillances électriques (surcharge, court-circuit, arc, vieillissement des isolants) représentent environ 30 % des causes d'incendie en milieu professionnel."},
+  /* Q12 */ {mod:3, q:"Quelle est la principale cause naturelle d'incendie en forêt ?", opts:["La concentration solaire","La foudre","L'auto-inflammation du foin","La sécheresse seule"], correct:1, expl:"La foudre est la principale cause naturelle d'incendie de forêt. Elle concentre une énergie considérable (jusqu'à 1 milliard de volts) sur un point précis."},
+
+  // ── Module 4 — Propagation (Q13–Q16) ─────────────────────────
+  /* Q13 */ {mod:4, q:"La propagation du feu par convection se fait via :", opts:["Contact direct entre matériaux conducteurs","Ondes infrarouges à distance","Mouvements de gaz chauds et fumées","Brandons projetés par le vent"], correct:2, expl:"La convection = transfert de chaleur par déplacement de masse de gaz chauds (fumées). C'est le mode le plus rapide et dangereux en bâtiment — souvent mortel avant les flammes."},
+  /* Q14 */ {mod:4, q:"La propagation par conduction est particulièrement dangereuse avec :", opts:["Les matériaux isolants (laine de verre)","Les structures métalliques (tuyaux, charpentes)","Les faux-plafonds en plâtre","Les cloisons en bois massif"], correct:1, expl:"Les métaux conduisent très bien la chaleur. Un tuyau métallique traversant un mur coupe-feu peut transmettre suffisamment de chaleur pour enflammer des matériaux de l'autre côté."},
+  /* Q15 */ {mod:4, q:"Pour bloquer la propagation par convection dans les gaines de ventilation, on utilise :", opts:["Des extincteurs CO₂ dans les gaines","Des clapets coupe-feu","Des portes coupe-feu","De la poudre ABC dans les conduits"], correct:1, expl:"Les clapets coupe-feu se ferment automatiquement au déclenchement de l'alarme, isolant chaque zone et bloquant la propagation des fumées et flammes dans les gaines."},
+  /* Q16 */ {mod:4, q:"Une traversée de paroi coupe-feu (câble, tuyau) doit être :", opts:["Laissée libre pour les dilatations thermiques","Obturée par un produit coupe-feu homologué (mastic, manchon)","Signalée uniquement par un panneau d'avertissement","Entourée de laine de verre standard"], correct:1, expl:"Toute traversée doit être obturée par un dispositif coupe-feu homologué (mastic intumescent, collier, manchon expansif) pour maintenir la résistance au feu de la paroi."},
+
+  // ── Module 5 — Cinétique (Q17–Q20) ───────────────────────────
+  /* Q17 */ {mod:5, q:"À quelle phase un extincteur portatif est-il encore efficace ?", opts:["Phase 3 — plein développement","Phase 4 — déclin","Phase 1 et début de la phase 2","À toutes les phases"], correct:2, expl:"Un extincteur portatif n'est efficace qu'en phase 1 (éclosion) et au début de la phase 2 (croissance). Au-delà, l'intervention doit être laissée aux sapeurs-pompiers équipés."},
+  /* Q18 */ {mod:5, q:"Le flash-over se produit :", opts:["En début de phase 1","Entre les phases 2 et 3","Uniquement en phase 4","À l'extérieur des bâtiments seulement"], correct:1, expl:"Le flash-over survient entre les phases 2 et 3, quand la température en plafond dépasse 500-600 °C, déclenchant l'embrasement simultané de tous les combustibles du local."},
+  /* Q19 */ {mod:5, q:"Quel est le signe précurseur le plus caractéristique du flash-over ?", opts:["Un sifflement aigu du système d'alarme","Une couche de fumée dense descendant vers le sol avec une lueur orange","Une coupure soudaine de l'électricité","L'absence totale de fumée dans les couloirs"], correct:1, expl:"La fumée chaude et dense descend vers le sol (à l'inverse de la convection normale) et présente une lueur orange témoignant de la pyrolyse de tous les matériaux combustibles."},
+  /* Q20 */ {mod:5, q:"Le backdraft survient quand :", opts:["On applique de l'eau sur un feu de classe B","Une ouverture apporte soudainement de l'air dans un espace confiné encore actif","On utilise du CO₂ en excès sur un feu","La T° descend trop rapidement après extinction"], correct:1, expl:"Le backdraft : dans un espace confiné, le feu s'est 'étouffé' mais des gaz combustibles chauds s'y sont accumulés. Toute ouverture apportant de l'air peut déclencher une explosion."},
+
+  // ── Module 6 — Conséquences (Q21–Q24) ────────────────────────
+  /* Q21 */ {mod:6, q:"Quelle est la principale cause de décès dans les incendies ?", opts:["Les brûlures directes par les flammes","L'inhalation de fumées et gaz toxiques","Le rayonnement thermique","L'effondrement de la structure"], correct:1, expl:"L'inhalation de fumées et gaz toxiques (CO, HCN...) représente environ 70 % des décès. Les victimes meurent souvent loin du foyer, intoxiquées avant que les flammes ne les atteignent."},
+  /* Q22 */ {mod:6, q:"Le monoxyde de carbone (CO) est :", opts:["Coloré en blanc, avec une odeur âcre","Incolore et inodore — indétectable sans capteur","Visible sous forme de fumée noire dense","Détectable par son odeur de soufre"], correct:1, expl:"Le CO est incolore et inodore. Il se fixe sur l'hémoglobine avec une affinité 200 fois supérieure à l'oxygène, bloquant l'oxygénation cellulaire sans aucun signe d'alerte olfactif."},
+  /* Q23 */ {mod:6, q:"L'anoxie (manque d'oxygène vital) survient quand la teneur en O₂ descend sous :", opts:["21 %","18 %","16 %","10 %"], correct:2, expl:"L'anoxie survient sous 16 % d'O₂ (taux normal : 21 %). La perte de connaissance est rapide sous 10 %. La mort est quasi immédiate sous 6 %."},
+  /* Q24 */ {mod:6, q:"Pour se déplacer dans un local enfumé, on doit :", opts:["Rester debout pour aller plus vite","Se déplacer accroupi ou à genoux — l'air respirable est au niveau du sol","Mettre un tissu mouillé sur la bouche et rester debout","Courir en retenant sa respiration"], correct:1, expl:"La fumée chaude monte et s'accumule en plafond. L'air le moins toxique subsiste dans la couche proche du sol. Se déplacer accroupi ou à genoux maximise les chances d'atteindre une sortie."},
+
+  // ── Module 7 — Classes de feux (Q25–Q28) ─────────────────────
+  /* Q25 */ {mod:7, q:"La classe F de feux désigne :", opts:["Les feux de métaux","Les feux de gaz sous pression","Les feux d'huiles et graisses de cuisson","Les feux de liquides chimiques"], correct:2, expl:"La classe F désigne les feux d'huiles et graisses de cuisson. L'eau y est absolument interdite : la vaporisation explosive projette des gouttelettes d'huile enflammée (BLEVE)."},
+  /* Q26 */ {mod:7, q:"Pour un feu sur une installation électrique sous tension, l'agent à utiliser est :", opts:["L'eau en grande quantité pour refroidir","La mousse AFFF","Le CO₂ ou la poudre ABC (agents non conducteurs)","L'eau avec additif mouillant"], correct:2, expl:"Sur un risque électrique, seuls des agents non conducteurs sont sûrs : CO₂ (meilleur choix) ou poudre ABC. L'eau et la mousse sont conductrices et présentent un risque d'électrocution."},
+  /* Q27 */ {mod:7, q:"Les feux de classe C (gaz) nécessitent comme action PRIORITAIRE :", opts:["Éteindre la flamme avec un CO₂ immédiatement","Couper l'alimentation en gaz avant toute extinction","Appliquer de la poudre ABC sur le brûleur","Attendre l'arrivée des pompiers sans agir"], correct:1, expl:"Pour un feu de gaz (classe C), l'action prioritaire est toujours de couper l'alimentation. Éteindre sans couper le gaz crée un risque d'explosion par accumulation du gaz qui continue à fuir."},
+  /* Q28 */ {mod:7, q:"Les feux de classe D (métaux) nécessitent :", opts:["De l'eau en grande quantité","De la poudre ABC polyvalente","Un agent spécifique classe D — l'eau est dangereuse","Du CO₂ à haute pression"], correct:2, expl:"Les feux de métaux (magnésium, sodium, potassium...) réagissent violemment avec l'eau et peuvent réagir avec le CO₂. Seule la poudre D spécifique est adaptée."},
+
+  // ── Module 8 — Alerter (Q29–Q30) ─────────────────────────────
+  /* Q29 */ {mod:8, q:"Que signifie le signal sonore EVASAN ?", opts:["Fin d'alerte — les occupants peuvent revenir","Signal d'alarme incendie — évacuation immédiate de tous","Test hebdomadaire de l'installation","Alerte météo — mise à l'abri"], correct:1, expl:"EVASAN = signal d'alarme incendie (3 bips courts, 1 pause, répété). Toute personne entendant ce signal doit évacuer immédiatement, sans chercher à récupérer ses affaires."},
+  /* Q30 */ {mod:8, q:"Pour donner l'alerte aux pompiers, on compose :", opts:["Le 15 (SAMU)","Le 17 (police)","Le 18 ou le 112","Le 114 (numéro d'urgence)"], correct:2, expl:"Le 18 est le numéro des sapeurs-pompiers en France. Le 112 est le numéro européen d'urgence. Les deux permettent de déclencher une intervention des secours."},
+
+  // ── Module 9 — Évacuer (Q31–Q32) ─────────────────────────────
+  /* Q31 */ {mod:9, q:"La responsabilité principale du serre-file est :", opts:["Ouvrir les portes et guider le groupe","Appeler les pompiers (18 ou 112)","Vérifier que chaque pièce est vide et fermer les portes","Escorter les PMR vers l'EAS"], correct:2, expl:"Le serre-file ferme la marche : il vérifie que chaque pièce est vide (y compris sanitaires), ferme les portes pour ralentir le feu et les fumées, puis rend compte au point de rassemblement."},
+  /* Q32 */ {mod:9, q:"Pendant une évacuation incendie, les ascenseurs sont :", opts:["Autorisés pour les PMR uniquement","Autorisés si le feu est dans une zone éloignée","Strictement interdits à tous","Autorisés si l'alarme n'est pas encore déclenchée"], correct:2, expl:"Les ascenseurs sont strictement interdits lors d'une évacuation incendie : panne possible au niveau du feu, envahissement par les fumées, perte de l'alimentation électrique."},
+
+  // ── Module 10 — Extincteurs (Q33–Q36) ────────────────────────
+  /* Q33 */ {mod:10, q:"Quel agent extincteur choisir en priorité pour un feu sur du matériel électronique ?", opts:["Eau pulvérisée sans additif","Poudre ABC polyvalente","CO₂ (gaz carbonique)","Mousse AFFF"], correct:2, expl:"Le CO₂ est idéal : non conducteur, aucun résidu sur les composants, s'évapore totalement. La poudre ABC, bien qu'efficace, dépose des particules qui peuvent détruire l'électronique."},
+  /* Q34 */ {mod:10, q:"Dans la règle PASS, le 'S' final (Sweep) signifie :", opts:["Sortir immédiatement dès que le feu grossit","Balayer la base des flammes par mouvements latéraux","Surveiller le feu après extinction","Signaler l'intervention aux pompiers"], correct:1, expl:"S = Sweep : balayer à la BASE des flammes par mouvements latéraux réguliers. Viser le combustible (la base), jamais les flammes elles-mêmes qui ne sont que la conséquence de la combustion."},
+  /* Q35 */ {mod:10, q:"La distance maximale à parcourir pour atteindre un extincteur est réglementairement de :", opts:["10 m","15 m","20 m","30 m"], correct:1, expl:"La distance maximale réglementaire est de 15 m entre tout point d'un local et l'extincteur le plus proche, pour permettre une intervention rapide dès le début de l'incendie."},
+  /* Q36 */ {mod:10, q:"Un extincteur partiellement utilisé doit :", opts:["Être remis en place — il reste du gaz propulseur","Être mis en révision immédiatement","Être rechargé par l'utilisateur lui-même","Être gardé en réserve pour une prochaine utilisation"], correct:1, expl:"Tout extincteur déclenché même partiellement doit être mis en révision immédiatement. Il ne peut pas être rescellé sans contrôle professionnel — remettre un extincteur incomplet est dangereux."},
+
+  // ── Module 11 — Prévention & bâtiment (Q37–Q40) ──────────────
+  /* Q37 */ {mod:12, q:"Que signifie REI 60 pour un élément de construction ?", opts:["Il résiste 60 secondes au feu","Il est Résistant, Étanche et Isolant thermiquement pendant 60 minutes","Il est réservé aux immeubles de grande hauteur","Il ne laisse passer que 60 % de la chaleur"], correct:1, expl:"REI 60 = Résistance mécanique + Étanchéité aux flammes et gaz + Isolation thermique, pendant 60 minutes. Le chiffre indique toujours la durée en minutes."},
+  /* Q38 */ {mod:12, q:"Les portes coupe-feu doivent :", opts:["Rester ouvertes en journée pour faciliter la circulation","Être retirées dans les couloirs à forte circulation","Rester fermées ou se fermer automatiquement à l'alarme","Être peintes en rouge pour les identifier"], correct:2, expl:"Les portes coupe-feu doivent être fermées en permanence ou équipées d'un dispositif de fermeture automatique se déclenchant à l'alarme. Les bloquer ouvertes annule totalement leur protection."},
+  /* Q39 */ {mod:12, q:"Le permis de feu est obligatoire pour :", opts:["Toute utilisation d'une flamme en cuisine","Tout travail par point chaud (soudure, meulage, découpe thermique)","Le remplacement d'une ampoule électrique","L'utilisation d'un extincteur en formation"], correct:1, expl:"Le permis de feu est un document formalisant l'analyse des risques, les mesures de prévention et les moyens d'extinction disponibles pour tout travail générant des points chauds (étincelles, flammes)."},
+  /* Q40 */ {mod:12, q:"Que doit contenir un registre de sécurité incendie ?", opts:["Uniquement les noms du personnel formé","Les plans d'évacuation seulement","Les consignes, exercices, vérifications d'équipements et incidents","Les factures des extincteurs uniquement"], correct:2, expl:"Le registre de sécurité doit être tenu à jour et consigner : les consignes incendie, les exercices d'évacuation (date, durée, observations), les vérifications des équipements et les incidents."},
+
+  // ── Questions supplémentaires (Q41–Q44) ───────────────────────
+  /* Q41 */ {mod:8, q:"Dans la séquence optimale face à un départ de feu, quelle est la 1ʳᵉ action ?", opts:["Attaquer le feu avec l'extincteur","Évacuer immédiatement","Déclencher l'alarme","Appeler les pompiers"], correct:2, expl:"La séquence optimale est : (1) Déclencher l'alarme → (2) Appeler les secours → (3) Attaquer si possible → (4) Évacuer. Déclencher l'alarme en premier avertit tous les occupants."},
+  /* Q42 */ {mod:9, q:"L'Espace d'Attente Sécurisé (EAS) est destiné :", opts:["Au stockage des extincteurs de réserve","Aux PMR ne pouvant emprunter les escaliers, en attente des secours","À l'accueil et au guidage des pompiers","Au responsable de sécurité pendant l'évacuation"], correct:1, expl:"L'EAS est une zone protégée résistant au feu, dotée d'un moyen de communication vers les secours, où les PMR qui ne peuvent pas descendre les escaliers attendent une assistance spécialisée."},
+  /* Q43 */ {mod:10, q:"L'eau sans additif est efficace sur :", opts:["Les feux de classe A uniquement","Les feux de classe A et B","Tous les types de feux","Les feux électriques"], correct:0, expl:"L'eau sans additif n'est efficace que sur les feux de classe A (solides). Elle est interdite sur les risques électriques (conductrice), sur les feux de classe F (BLEVE) et inadaptée aux feux de liquides (classe B)."},
+  /* Q44 */ {mod:12, q:"Le compartimentage d'un bâtiment a pour objectif principal :", opts:["Réduire les coûts de construction","Confiner l'incendie et protéger les voies d'évacuation","Améliorer l'isolation acoustique","Permettre une ventilation plus efficace"], correct:1, expl:"Le compartimentage divise le bâtiment en zones étanches au feu. Objectif : confiner l'incendie dans une zone le temps que les secours interviennent et protéger les voies d'évacuation."},
+
+  // ── Module 11 — Autres moyens d'extinction (Q45–Q46) ────────
+  /* Q45 */ {mod:11, q:"La couverture anti-feu doit, après utilisation :", opts:["Être soulevée après 30 secondes pour vérifier si le feu est éteint","Être laissée en place plusieurs minutes sans être soulevée","Être immédiatement retirée et mise de côté","Être arrosée d'eau froide pour refroidir"], correct:1, expl:"La couverture anti-feu ne doit jamais être soulevée rapidement après application : cela réintroduirait l'oxygène et pourrait rallumer le feu. Laisser en place plusieurs minutes."},
+  /* Q46 */ {mod:11, q:"Les sprinkleurs s'activent :", opts:["Tous simultanément au déclenchement de l'alarme","Uniquement sur la zone en feu, par tête thermosensible individuelle","À la demande du responsable sécurité","Après 5 minutes de montée en température générale"], correct:1, expl:"Chaque tête de sprinkleur est thermosensible et s'active individuellement quand la température locale atteint 68–93 °C. Contrairement à l'idée reçue, ils ne s'activent pas tous en même temps."},
+
+  // ── Module 12 — Prévention & bâtiment (Q47) ──────────────────
+  /* Q47 */ {mod:12, q:"Le registre de sécurité incendie doit consigner :", opts:["Uniquement les incidents graves","Les consignes, exercices, vérifications d'équipements et incidents","Les noms des visiteurs uniquement","Les factures d'achat des extincteurs"], correct:1, expl:"Le registre de sécurité doit être tenu à jour et consigner : consignes incendie, exercices d'évacuation (date, durée, observations), vérifications des équipements et incidents."},
+
+  // ── Module 13 — Pour aller plus loin (Q48) ───────────────────
+  /* Q48 */ {mod:13, q:"La formation EPI (Équipier de Première Intervention) permet :", opts:["D'obtenir le diplôme SSIAP 1","De maîtriser l'utilisation des extincteurs et des RIA en situation réelle","De diriger l'évacuation d'un ERP","De réaliser la maintenance annuelle des extincteurs"], correct:1, expl:"La formation EPI habilite à utiliser les extincteurs et robinets incendie armés (RIA). Elle inclut des mises en situation sur feux réels. Elle est distincte de la certification SSIAP réservée aux professionnels de la sécurité incendie."}
+
+]; // fin ALL_QUIZ_QUESTIONS
+
+// ================================================================
+// STORAGE
+// ================================================================
+const STORE_KEY = 'incendie_progress_v5';
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveProgress(data){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+  catch(e){}
+}
+
+let progress = loadProgress();
+if(!progress.checkState) progress.checkState = {};
+
+let curMod = null;
+let sidebarCollapsed = false;
+let currentQuizQuestions = [];
+let quizAnswers = {};
+let quizAnsweredCount = 0;
+
+// ================================================================
+// HELPERS
+// ================================================================
+function isModuleValidated(idx){
+  const m = MODULES[idx];
+  const ck = (progress.checkState && progress.checkState[idx]) || {};
+  return Object.values(ck).filter(Boolean).length >= m.checklist.length;
+}
+function allModulesValidated(){
+  return MODULES.every((_, i) => isModuleValidated(i));
+}
+function countValidatedModules(){
+  return MODULES.filter((_, i) => isModuleValidated(i)).length;
+}
+function shuffleArray(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+// ================================================================
+// SIDEBAR
+// ================================================================
+function toggleSidebar(){
+  sidebarCollapsed = !sidebarCollapsed;
+  document.getElementById('app').classList.toggle('collapsed', sidebarCollapsed);
+  renderMiniProg();
+}
+function renderMiniProg(){
+  const el = document.getElementById('sb-mini-prog');
+  if(!el) return;
+  el.innerHTML = MODULES.map((_, i) => {
+    const cls = isModuleValidated(i) ? 'done-dot' : (curMod === i ? 'cur-dot' : 'todo-dot');
+    return `<span class="sb-status ${cls}" title="Module ${i+1}" style="cursor:pointer" onclick="goMod(${i})"></span>`;
+  }).join('');
+}
+function refreshSidebarDots(){
+  MODULES.forEach((_, i) => {
+    const dot = document.getElementById('sbdot-' + i);
+    if(dot) dot.className = 'sb-status ' + (isModuleValidated(i) ? 'done-dot' : (curMod === i ? 'cur-dot' : 'todo-dot'));
+  });
+  renderMiniProg();
+  refreshHomeBadges();
+  refreshHomeProgress();
+  updateQuizAccessUI();
+}
+function refreshHomeBadges(){
+  MODULES.forEach((_, i) => {
+    const el = document.getElementById('homebadge-' + i);
+    if(!el) return;
+    const v = isModuleValidated(i);
+    el.className = v ? 'badge b-done' : 'badge b-todo';
+    el.textContent = v ? 'Validé ✓' : 'À faire';
+  });
+}
+function refreshHomeProgress(){
+  const count = countValidatedModules();
+  const pct = Math.round(count / MODULES.length * 100);
+  const lbl = document.getElementById('prog-label');
+  const fill = document.getElementById('prog-fill');
+  if(lbl) lbl.textContent = `Progression — ${count} module${count > 1 ? 's' : ''} sur ${MODULES.length} validé${count > 1 ? 's' : ''}`;
+  if(fill) fill.style.width = pct + '%';
+}
+function updateQuizAccessUI(){
+  const ready = allModulesValidated();
+  const sbQuiz = document.getElementById('sblink-quiz');
+  const sbQuizText = document.getElementById('sblink-quiz-text');
+  const homeCard = document.getElementById('quiz-home-card');
+  const homeLock = document.getElementById('quiz-home-lock-msg');
+  if(sbQuiz) sbQuiz.className = 'sb-link ' + (ready ? 'quiz-ready' : 'quiz-locked');
+  if(sbQuizText) sbQuizText.textContent = ready ? 'Quiz final 🏆' : 'Quiz final 🔒';
+  if(homeCard) homeCard.className = 'quiz-home-card' + (ready ? '' : ' locked');
+  if(homeLock){
+    const rem = MODULES.length - countValidatedModules();
+    homeLock.textContent = ready
+      ? '✅ Tous les modules validés — Accès débloqué !'
+      : `🔒 ${rem} module${rem > 1 ? 's' : ''} restant${rem > 1 ? 's' : ''} à valider`;
+    homeLock.style.color = ready ? '#27500a' : '#e07800';
+  }
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function showHome(){
+  curMod = null;
+  document.getElementById('home-view').classList.remove('hidden');
+  const mv = document.getElementById('mod-view');
+  mv.classList.remove('visible'); mv.style.display = 'none';
+  const qv = document.getElementById('quiz-view');
+  qv.classList.remove('visible'); qv.style.display = 'none';
+  document.getElementById('crumb').textContent = 'Sécurité incendie';
+  document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('sblink-home').classList.add('active');
+  refreshSidebarDots();
+}
+function goMod(idx){
+  curMod = idx;
+  document.getElementById('home-view').classList.add('hidden');
+  const mv = document.getElementById('mod-view');
+  mv.style.display = 'flex'; mv.classList.add('visible');
+  const qv = document.getElementById('quiz-view');
+  qv.classList.remove('visible'); qv.style.display = 'none';
+  document.getElementById('crumb').textContent = MODULES[idx].title;
+  document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
+  const sbl = document.getElementById('sblink-' + idx);
+  if(sbl) sbl.classList.add('active');
+  refreshSidebarDots();
+  renderMod(idx);
+  const top = document.getElementById('module-top-' + idx);
+  if(top) top.scrollIntoView({ behavior: 'auto', block: 'start' });
+}
+function tryOpenQuiz(){
+  if(!allModulesValidated()){
+    const rem = MODULES.length - countValidatedModules();
+    alert(`🔒 Quiz verrouillé\n\nValidez tous les modules en cochant tous les points clés.\n${rem} module${rem > 1 ? 's' : ''} restant${rem > 1 ? 's' : ''} à valider.`);
+    return;
+  }
+  openQuiz();
+}
+function openQuiz(){
+  curMod = null;
+  document.getElementById('home-view').classList.add('hidden');
+  const mv = document.getElementById('mod-view');
+  mv.classList.remove('visible'); mv.style.display = 'none';
+  const qv = document.getElementById('quiz-view');
+  qv.style.display = 'flex'; qv.classList.add('visible');
+  document.getElementById('crumb').textContent = 'Quiz de certification';
+  document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('sblink-quiz').classList.add('active');
+  renderGlobalQuiz();
+}
+
+// ================================================================
+// MODULE RENDER — sequential, no tabs
+// ================================================================
+function renderMod(idx){
+  const m = MODULES[idx];
+  const mv = document.getElementById('mod-view');
+
+  // Checklist HTML
+  const ck = (progress.checkState && progress.checkState[idx]) || {};
+  const chkHTML = m.checklist.map((txt, ci) => {
+    const done = !!ck[ci];
+    return `<div class="chk-item${done ? ' checked' : ''}" onclick="toggleCheck(${idx},${ci})" id="chk-${idx}-${ci}">
+      <div class="chk-box">${done ? '✓' : ''}</div>
+      <div class="chk-text">${txt}</div>
+    </div>`;
+  }).join('');
+  const doneCount = Object.values(ck).filter(Boolean).length;
+  const allChecked = doneCount === m.checklist.length;
+
+  // Sections HTML — rendered sequentially
+  const sectionsHTML = m.sections.map(s => `
+    <div class="lesson-block">
+      <div class="lesson-block-header"><div class="lesson-block-title">${s.title}</div></div>
+      <div class="lesson-block-body">${s.content}</div>
+    </div>`).join('');
+
+  // Nav
+  const prevIdx = idx - 1;
+  const nextIdx = idx + 1;
+  const navHTML = `
+    <div class="mod-nav-bottom">
+      ${prevIdx >= 0 ? `<button class="nav-btn" onclick="goMod(${prevIdx})">← Module ${prevIdx + 1}</button>` : ''}
+      ${nextIdx < MODULES.length
+        ? `<button class="nav-btn primary" onclick="goMod(${nextIdx})">Module ${nextIdx + 1} →</button>`
+        : `<button class="nav-btn primary" onclick="showHome()">Retour à l'accueil</button>`}
+    </div>`;
+
+  mv.innerHTML = `
+    <span id="module-top-${idx}"></span>
+    <button class="back-btn" onclick="showHome()">← Retour au menu</button>
+    <div class="mod-header-block">
+      <h1>${m.icon} Module ${m.num} — ${m.title}</h1>
+      <p>${m.sections.length} section${m.sections.length > 1 ? 's' : ''} · Lisez le contenu puis cochez tous les points clés pour valider ce module</p>
+    </div>
+    ${sectionsHTML}
+    <div class="lesson-block">
+      <div class="lesson-block-header"><div class="lesson-block-title">✅ Points clés à retenir — cochez tout pour valider le module</div></div>
+      <div class="lesson-block-body">
+        <div class="checklist-items">${chkHTML}</div>
+        <div class="chk-progress" id="chkprog-${idx}">${doneCount}/${m.checklist.length} points cochés${allChecked ? ' — ✅ Module validé !' : ''}</div>
+      </div>
+    </div>
+    ${navHTML}`;
+}
+
+function toggleCheck(modIdx, ci){
+  if(!progress.checkState) progress.checkState = {};
+  if(!progress.checkState[modIdx]) progress.checkState[modIdx] = {};
+  progress.checkState[modIdx][ci] = !progress.checkState[modIdx][ci];
+  saveProgress(progress);
+  const el = document.getElementById(`chk-${modIdx}-${ci}`);
+  if(el){
+    const done = progress.checkState[modIdx][ci];
+    el.classList.toggle('checked', done);
+    el.querySelector('.chk-box').textContent = done ? '✓' : '';
+  }
+  const ck = progress.checkState[modIdx];
+  const doneCount = Object.values(ck).filter(Boolean).length;
+  const total = MODULES[modIdx].checklist.length;
+  const prog = document.getElementById(`chkprog-${modIdx}`);
+  if(prog) prog.textContent = `${doneCount}/${total} points cochés${doneCount === total ? ' — ✅ Module validé !' : ''}`;
+  refreshSidebarDots();
+}
+
+// ================================================================
+// GLOBAL QUIZ — 10 questions tirées parmi 48 (13 modules)
+// Tirage équilibré : 1 question par module (13 modules → 10 tirées)
+// ================================================================
+function drawQuizQuestions(){
+  // On tire 1 question par module pour les 13 modules, puis on garde 10 au hasard
+  const perMod = [];
+  for(let mod = 1; mod <= 13; mod++){
+    const pool = ALL_QUIZ_QUESTIONS.filter(q => q.mod === mod);
+    if(pool.length > 0){
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      perMod.push({ ...pick, bankIndex: ALL_QUIZ_QUESTIONS.indexOf(pick) + 1 });
+    }
+  }
+  // Mélanger et garder exactement 10 questions
+  return shuffleArray(perMod).slice(0, 10);
+}
+
+function renderGlobalQuiz(){
+  const qv = document.getElementById('quiz-view');
+  currentQuizQuestions = drawQuizQuestions();
+  quizAnswers = {};
+  quizAnsweredCount = 0;
+
+  const questionsHTML = currentQuizQuestions.map((q, qi) => `
+    <div class="gquiz-question" id="gqq-${qi}">
+      <div class="gquiz-q-num">Question ${qi + 1} <span style="color:#c5bde8;font-weight:400">(Q${q.bankIndex} — Module ${q.mod})</span></div>
+      <div class="gquiz-q">${q.q}</div>
+      <div class="gquiz-opts">
+        ${q.opts.map((o, oi) => `
+          <div class="gqopt" id="gqopt-${qi}-${oi}" onclick="answerGlobalQ(${qi},${oi})">
+            <span class="gqopt-letter">${LETTERS[oi]}</span>
+            <span>${o}</span>
+          </div>`).join('')}
+      </div>
+      <div class="gquiz-expl gquiz-expl-ok" id="gqexpl-ok-${qi}">✓ ${q.expl}</div>
+      <div class="gquiz-expl gquiz-expl-ko" id="gqexpl-ko-${qi}">✗ ${q.expl}</div>
+    </div>`).join('');
+
+  qv.innerHTML = `
+    <button class="back-btn" onclick="showHome()">← Retour au menu</button>
+    <div class="gquiz-wrap">
+      <div class="gquiz-header"><span style="font-size:24px">🏆</span>
+        <div class="gquiz-title">Quiz de certification — Sécurité incendie</div></div>
+      <div class="gquiz-subtitle">10 questions (1 par module) · Réponses A/B/C/D · Score minimum requis : 7/10</div>
+      <div class="gquiz-progress-bar-wrap"><div class="gquiz-progress-bar" id="gquiz-pbar" style="width:0%"></div></div>
+      ${questionsHTML}
+      <div class="gquiz-score-wrap" id="gquiz-score">
+        <div class="gquiz-score-num" id="gquiz-scorenum">0/10</div>
+        <div class="gquiz-score-label" id="gquiz-scorelbl"></div>
+        <div class="gquiz-score-bar-wrap"><div class="gquiz-score-bar" id="gquiz-scorebar" style="width:0%"></div></div>
+        <button class="gquiz-retry-btn" onclick="renderGlobalQuiz()">🔄 Nouveau tirage</button>
+      </div>
+      <div class="gquiz-pass-msg" id="gquiz-pass-msg">🎉 Félicitations ! Score suffisant — vous pouvez envoyer votre attestation ci-dessous.</div>
+      <div class="gquiz-fail-msg" id="gquiz-fail-msg">Score insuffisant (minimum 7/10). Révisez les modules concernés et retentez — les questions changent à chaque tirage.</div>
+      <div class="send-form-wrap" id="send-form-wrap">
+        <div class="send-form-title">📧 Envoyer l'attestation de réussite</div>
+        <div class="form-group">
+          <label class="form-label">Votre nom complet</label>
+          <input class="form-input" type="text" id="sf-name" placeholder="Prénom Nom" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Votre adresse e-mail</label>
+          <input class="form-input" type="email" id="sf-email" placeholder="vous@exemple.fr" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Résultat (généré automatiquement)</label>
+          <textarea class="form-input form-textarea" id="sf-content" readonly></textarea>
+        </div>
+        <button class="send-btn" onclick="sendResult()">📤 Envoyer au ${CONFIG.DESTINATAIRE_LABEL}</button>
+        <div class="send-success" id="send-success">✅ Votre client de messagerie a été ouvert avec l'attestation préremplie.</div>
+      </div>
+    </div>`;
+}
+
+function answerGlobalQ(qi, chosen){
+  if(quizAnswers[qi] !== undefined) return;
+  quizAnswers[qi] = chosen;
+  quizAnsweredCount++;
+  const q = currentQuizQuestions[qi];
+  q.opts.forEach((_, oi) => {
+    const el = document.getElementById(`gqopt-${qi}-${oi}`);
+    if(!el) return;
+    el.classList.add('gq-disabled');
+    if(oi === q.correct) el.classList.add('gq-correct');
+    else if(oi === chosen) el.classList.add('gq-wrong');
+  });
+  const okEl = document.getElementById(`gqexpl-ok-${qi}`);
+  const koEl = document.getElementById(`gqexpl-ko-${qi}`);
+  if(chosen === q.correct){ if(okEl) okEl.classList.add('show'); }
+  else{ if(koEl) koEl.classList.add('show'); }
+  const pbar = document.getElementById('gquiz-pbar');
+  if(pbar) pbar.style.width = (quizAnsweredCount / 10 * 100) + '%';
+  if(quizAnsweredCount === 10) showGlobalScore();
+}
+
+function showGlobalScore(){
+  let score = 0;
+  currentQuizQuestions.forEach((q, qi) => { if(quizAnswers[qi] === q.correct) score++; });
+  const pct = Math.round(score / 10 * 100);
+  const passed = score >= 7;
+  const labels = ['À revoir…', 'Quelques lacunes', 'Assez bien', 'Bien !', 'Très bien !', 'Excellent ! 🎉'];
+  const lbl = pct>=90?labels[5]:pct>=75?labels[4]:pct>=60?labels[3]:pct>=50?labels[2]:pct>=30?labels[1]:labels[0];
+
+  const sw = document.getElementById('gquiz-score');
+  const sn = document.getElementById('gquiz-scorenum');
+  const sl = document.getElementById('gquiz-scorelbl');
+  const sb = document.getElementById('gquiz-scorebar');
+  if(sw) sw.classList.add('show');
+  if(sn) sn.textContent = `${score}/10`;
+  if(sl) sl.textContent = `${pct}% — ${lbl}`;
+  if(sb){ sb.classList.toggle('fail', !passed); setTimeout(() => sb.style.width = pct + '%', 50); }
+
+  if(passed){
+    const pm = document.getElementById('gquiz-pass-msg');
+    if(pm) pm.classList.add('show');
+    // Pre-fill result content — succinct format
+    const now = new Date();
+    const ds = now.toLocaleDateString('fr-FR', { year:'numeric', month:'2-digit', day:'2-digit' });
+    // Build succinct result string: "Q3:B✓ Q7:A→C Q11:D✓ ..."
+    const detail = currentQuizQuestions.map((q, qi) => {
+      const chosen = quizAnswers[qi];
+      const ok = chosen === q.correct;
+      const chosenLetter = LETTERS[chosen];
+      const correctLetter = LETTERS[q.correct];
+      return ok
+        ? `Q${q.bankIndex}:${chosenLetter}✓`
+        : `Q${q.bankIndex}:${chosenLetter}→${correctLetter}`;
+    }).join('  ');
+
+    const sf = document.getElementById('send-form-wrap');
+    if(sf){
+      sf.classList.add('show');
+      const ct = document.getElementById('sf-content');
+      if(ct) ct.value =
+`ATTESTATION — Quiz Sécurité Incendie
+Date : ${ds}
+Score : ${score}/10 (${pct}%) — RÉUSSI ✓ (min. 7/10)
+Résultats : ${detail}
+Formation : Prévention & Sécurité Incendie — 13 modules`;
+    }
+  } else {
+    const fm = document.getElementById('gquiz-fail-msg');
+    if(fm) fm.classList.add('show');
+  }
+  setTimeout(() => {
+    const el = document.getElementById('gquiz-score');
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 100);
+}
+
+function sendResult(){
+  const name = document.getElementById('sf-name').value.trim();
+  const email = document.getElementById('sf-email').value.trim();
+  if(!name){ alert('Veuillez saisir votre nom complet.'); return; }
+  if(!email){ alert('Veuillez saisir votre adresse e-mail.'); return; }
+
+  let score = 0;
+  currentQuizQuestions.forEach((q, qi) => { if(quizAnswers[qi] === q.correct) score++; });
+  const pct = Math.round(score / 10 * 100);
+  const now = new Date();
+  const ds = now.toLocaleDateString('fr-FR', { year:'numeric', month:'2-digit', day:'2-digit' });
+  const detail = currentQuizQuestions.map((q, qi) => {
+    const chosen = quizAnswers[qi];
+    const ok = chosen === q.correct;
+    return ok
+      ? `Q${q.bankIndex}:${LETTERS[chosen]}✓`
+      : `Q${q.bankIndex}:${LETTERS[chosen]}→${LETTERS[q.correct]}`;
+  }).join('  ');
+
+  const body =
+`ATTESTATION — Quiz Sécurité Incendie
+Apprenant : ${name}
+E-mail : ${email}
+Date : ${ds}
+Score : ${score}/10 (${pct}%) — RÉUSSI ✓ (min. 7/10)
+Résultats : ${detail}
+Formation : Prévention & Sécurité Incendie — 13 modules`;
+
+  const subj = encodeURIComponent(`Attestation Quiz Sécurité Incendie — ${name} — ${ds}`);
+  const bodyEnc = encodeURIComponent(body);
+  window.location.href = `mailto:${CONFIG.DESTINATAIRE_EMAIL}?cc=${email}&subject=${subj}&body=${bodyEnc}`;
+
+  const ss = document.getElementById('send-success');
+  if(ss) ss.classList.add('show');
+}
+
+// ================================================================
+// LIGHTBOX — click any img.image to zoom, click anywhere to close
+// ================================================================
+function openLightbox(src, alt){
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  img.src = src;
+  img.alt = alt || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+// Delegate clicks on img.image — works for dynamically rendered content
+document.addEventListener('click', e => {
+  if(e.target.matches('img.image') && !e.target.closest('#lightbox')){
+    openLightbox(e.target.src, e.target.alt);
+  }
+});
+
+// ================================================================
+// INIT
+// ================================================================
+refreshSidebarDots();
+showHome();
+</script>
+</body>
+</html>
